@@ -1,0 +1,2244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0">
+<title>DISCIPLINE</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&family=Bebas+Neue&display=swap" rel="stylesheet">
+<style>
+:root{
+  --a:#4f8ef7;--ar:79;--ag:142;--ab:247;
+  --b:#7c5cfc;--br:124;--bg2:92;--bb:252;
+  --text-on-accent:#ffffff;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{font-family:'Inter',sans-serif;background:#050d1a;color:#e8edf5;min-height:100vh;overflow-x:hidden}
+#bg{position:fixed;inset:0;z-index:0;pointer-events:none}
+#bg::before{content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse 70% 55% at 15% 12%,rgba(var(--ar),var(--ag),var(--ab),.11) 0%,transparent 60%),
+  radial-gradient(ellipse 55% 45% at 88% 78%,rgba(var(--br),var(--bg2),var(--bb),.08) 0%,transparent 60%),
+  radial-gradient(ellipse 40% 40% at 55% 45%,rgba(20,30,60,.4) 0%,transparent 100%);transition:background .8s}
+#bg::after{content:'';position:absolute;inset:0;
+  background-image:linear-gradient(rgba(255,255,255,.011) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.011) 1px,transparent 1px);
+  background-size:44px 44px}
+
+/* Glass */
+.gl{background:rgba(8,20,45,.68);border:1px solid rgba(255,255,255,.08);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);border-radius:14px}
+.gl-b{background:rgba(8,20,45,.84);border:1px solid rgba(255,255,255,.16);backdrop-filter:blur(30px);-webkit-backdrop-filter:blur(30px);border-radius:20px}
+
+/* Accent */
+.ac{color:var(--a)!important}.ac-bg{background:var(--a)!important}
+.ac-al{background:rgba(var(--ar),var(--ag),var(--ab),.13)!important}
+.ac-al2{background:rgba(var(--ar),var(--ag),var(--ab),.06)!important}
+/* Two-color gradient text */
+.ac-tg{background:linear-gradient(135deg,var(--a) 0%,var(--b) 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+/* Two-color gradient dot */
+.ac-dot{background:linear-gradient(135deg,var(--a),var(--b));box-shadow:0 0 7px var(--a)}
+
+/* Type */
+.bb{font-family:'Bebas Neue',sans-serif}
+.nx{font-family:'Bebas Neue',sans-serif;font-size:clamp(2.8rem,9.5vw,3.8rem);line-height:1;letter-spacing:.04em}
+.nl{font-family:'Bebas Neue',sans-serif;font-size:clamp(2.1rem,7vw,2.6rem);line-height:1;letter-spacing:.03em}
+.nm{font-family:'Bebas Neue',sans-serif;font-size:clamp(1.5rem,5vw,1.8rem);line-height:1;letter-spacing:.03em}
+.fday{font-family:'Bebas Neue',sans-serif;line-height:1;
+  background:linear-gradient(180deg,#ffffff 0%,rgba(var(--ar),var(--ag),var(--ab),.72) 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+
+/* Section label */
+.sl{font-size:.63rem;font-weight:700;letter-spacing:.13em;text-transform:uppercase;
+  color:rgba(232,237,245,.38);display:flex;align-items:center;gap:6px;margin-bottom:11px}
+.dot5{width:5px;height:5px;border-radius:50%;flex-shrink:0}
+
+/* Inputs */
+.inp{background:rgba(255,255,255,.055);border:1px solid rgba(255,255,255,.1);color:#e8edf5;
+  border-radius:10px;padding:10px 14px;font-family:inherit;font-size:.875rem;width:100%;
+  outline:none;transition:border-color .2s,box-shadow .2s}
+.inp:focus{border-color:var(--a);box-shadow:0 0 0 3px rgba(var(--ar),var(--ag),var(--ab),.18)}
+.inp::placeholder{color:rgba(232,237,245,.28)}
+select.inp option{background:#0d1e3a;color:#e8edf5}
+
+/* Buttons */
+.btn{border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.05);color:#e8edf5;
+  font-family:inherit;font-size:.82rem;font-weight:600;padding:9px 16px;border-radius:9px;
+  cursor:pointer;transition:all .18s;letter-spacing:.02em;white-space:nowrap;min-height:40px}
+.btn:active{transform:scale(.97)}
+.btn:hover{background:rgba(255,255,255,.09);border-color:rgba(255,255,255,.2)}
+.btn-ac{background:linear-gradient(135deg,var(--a),var(--b));
+  border-color:transparent!important;color:var(--text-on-accent,#fff)!important}
+.btn-ac:hover{opacity:.87}.btn-ac:active{opacity:.8;transform:scale(.97)}
+.btn-g{background:none;border:1px dashed rgba(255,255,255,.14);color:rgba(232,237,245,.45)}
+.btn-g:hover{border-color:rgba(255,255,255,.28);color:#e8edf5}
+.btn-r{border-color:rgba(247,95,95,.3);color:#f75f5f}.btn-r:hover{background:rgba(247,95,95,.12)}
+.btn-sm{padding:6px 12px;font-size:.75rem;border-radius:8px;min-height:36px}
+
+/* Checkbox */
+.ck{width:20px;height:20px;border:1.5px solid rgba(255,255,255,.22);border-radius:5px;
+  cursor:pointer;appearance:none;position:relative;transition:all .15s;flex-shrink:0;margin-top:1px}
+.ck:checked{background:var(--a);border-color:var(--a)}
+.ck:checked::after{content:'✓';position:absolute;top:50%;left:50%;
+  transform:translate(-50%,-50%);font-size:11px;color:#fff;font-weight:900}
+.ck:disabled{opacity:.32;cursor:default}
+
+/* Color swatches — gradient pills */
+.sw{width:40px;height:28px;border-radius:14px;cursor:pointer;border:2.5px solid transparent;
+  transition:transform .15s,border-color .15s,box-shadow .15s;flex-shrink:0}
+.sw:hover{transform:scale(1.12);box-shadow:0 0 8px rgba(255,255,255,.2)}
+.sw.on{border-color:#fff;transform:scale(1.12);box-shadow:0 0 10px rgba(255,255,255,.35)}
+
+/* Avatar */
+.av{border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-family:'Bebas Neue',sans-serif;flex-shrink:0;border:1.5px solid rgba(255,255,255,.12)}
+
+/* Priority */
+.pl{background:rgba(155,179,201,.15);color:#9bb3c9}
+.pm{background:rgba(79,142,247,.15);color:#4f8ef7}
+.ph{background:rgba(245,200,66,.15);color:#f5c842}
+
+/* Rank */
+.r1{color:#f5c842;text-shadow:0 0 12px rgba(245,200,66,.5)}.r2{color:#9bb3c9}.r3{color:#c8855a}
+.rb{height:3px;border-radius:3px;transition:width .65s cubic-bezier(.4,0,.2,1)}
+.rbw{flex:1;background:rgba(255,255,255,.06);border-radius:3px;height:3px}
+
+/* Views */
+.view{display:none}.view.on{display:block;animation:fadeUp .32s cubic-bezier(.22,1,.36,1)}
+
+/* Auth tabs */
+.tab-a{color:#e8edf5!important;border-bottom:2px solid var(--a)}
+.tab-i{color:rgba(232,237,245,.4);border-bottom:2px solid transparent}
+
+/* Scrollbar */
+::-webkit-scrollbar{width:3px}::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:2px}
+
+/* PW strength */
+.pwb{height:3px;border-radius:3px;transition:width .3s,background .3s;width:0}
+
+/* Toast */
+#toast{position:fixed;bottom:84px;left:50%;transform:translateX(-50%);
+  background:rgba(5,13,26,.96);border:1px solid rgba(255,255,255,.14);
+  border-radius:10px;padding:9px 20px;font-size:.78rem;font-weight:600;
+  backdrop-filter:blur(12px);opacity:0;transition:opacity .22s;
+  pointer-events:none;white-space:nowrap;z-index:9999}
+#toast.on{opacity:1}
+@media(min-width:768px){#toast{bottom:26px}}
+
+/* Read-only badge */
+.ro-b{background:rgba(245,200,66,.09);border:1px solid rgba(245,200,66,.26);
+  border-radius:10px;padding:7px 14px;font-size:.75rem;font-weight:600;
+  color:#f5c842;text-align:center;letter-spacing:.04em;margin-bottom:12px}
+
+/* Alert banner */
+.alert-b{background:rgba(247,95,95,.08);border:1px solid rgba(247,95,95,.28);
+  border-radius:11px;padding:9px 14px;margin-bottom:12px;display:flex;
+  align-items:center;gap:9px;animation:fadeUp .3s ease}
+.alert-dot{width:7px;height:7px;border-radius:50%;background:#f75f5f;
+  box-shadow:0 0 7px #f75f5f;flex-shrink:0;animation:pulse 2s infinite}
+
+/* Wake score badges */
+.wvs{border-radius:7px;padding:5px 10px;font-size:.72rem;font-weight:700;
+  letter-spacing:.02em;display:inline-flex;align-items:center;gap:5px;margin-top:5px}
+.wvs-up{background:rgba(61,219,160,.1);border:1px solid rgba(61,219,160,.3);color:#3ddba0}
+.wvs-dn{background:rgba(247,95,95,.1);border:1px solid rgba(247,95,95,.3);color:#f75f5f}
+.wvs-no{background:rgba(245,200,66,.08);border:1px solid rgba(245,200,66,.25);color:#f5c842}
+
+/* History cards */
+.hst-day{background:rgba(8,20,45,.55);border:1px solid rgba(255,255,255,.07);
+  border-radius:12px;overflow:hidden;transition:border-color .2s}
+.hst-day:hover{border-color:rgba(255,255,255,.14)}
+.hst-hd{padding:12px 14px;cursor:pointer;display:flex;align-items:center;gap:12px}
+.hst-bd{padding:12px 14px 16px;border-top:1px solid rgba(255,255,255,.06);display:none}
+.hst-bd.open{display:block;animation:fadeUp .25s ease}
+.ful-chip{font-size:.6rem;font-weight:700;padding:2px 6px;border-radius:999px;
+  letter-spacing:.03em;display:inline-flex;align-items:center;gap:2px}
+.fc-on{background:rgba(var(--ar),var(--ag),var(--ab),.16);color:var(--a)}
+.fc-off{background:rgba(255,255,255,.05);color:rgba(232,237,245,.22);text-decoration:line-through}
+
+/* Tomorrow target boxes */
+.tgt-set{background:rgba(61,219,160,.08);border:1px solid rgba(61,219,160,.22);
+  border-radius:10px;padding:9px 12px;margin-top:10px}
+.tgt-unset{background:rgba(255,255,255,.03);border:1px dashed rgba(255,255,255,.12);
+  border-radius:10px;padding:9px 12px;margin-top:10px}
+
+/* Journal */
+.jnl-area{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);
+  border-radius:11px;padding:12px 14px;font-family:inherit;font-size:.875rem;
+  color:#e8edf5;width:100%;min-height:88px;resize:vertical;outline:none;
+  line-height:1.6;transition:border-color .2s}
+.jnl-area:focus{border-color:var(--a);box-shadow:0 0 0 3px rgba(var(--ar),var(--ag),var(--ab),.15)}
+.jnl-area::placeholder{color:rgba(232,237,245,.2)}
+.jnl-area:disabled{opacity:.45;cursor:default}
+
+/* Chart container */
+.chart-wrap{position:relative;width:100%;-webkit-user-select:none;user-select:none}
+.chart-wrap svg{display:block;width:100%;overflow:visible;touch-action:none}
+.ctip{position:absolute;background:#0c1a30;border:1px solid rgba(255,255,255,.16);
+  border-radius:9px;padding:7px 13px;font-size:.74rem;pointer-events:none;
+  opacity:0;transition:opacity .18s;white-space:nowrap;z-index:20;
+  backdrop-filter:blur(10px);font-weight:600}
+
+/* Last Active */
+.la{font-size:.64rem;font-weight:500;color:rgba(156,163,175,.75);letter-spacing:.01em;
+  white-space:nowrap;display:inline-flex;align-items:center;gap:3px}
+.la-now{color:#3ddba0;font-weight:700}
+.la-dot{width:5px;height:5px;border-radius:50%;background:#3ddba0;
+  box-shadow:0 0 5px #3ddba0;flex-shrink:0;animation:pulse 2s infinite}
+.la-dot-off{width:5px;height:5px;border-radius:50%;background:rgba(156,163,175,.35);flex-shrink:0}
+
+/* ══════════════ BOTTOM NAV (mobile) ══════════════ */
+#bottom-nav{
+  position:fixed;bottom:0;left:0;right:0;
+  background:rgba(5,11,22,.94);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
+  border-top:1px solid rgba(255,255,255,.09);
+  display:none;z-index:500;padding:0 0 env(safe-area-inset-bottom,0);
+}
+#bottom-nav.logged-in{display:flex}
+#bottom-nav .bn-tab{
+  flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:10px 4px 8px;cursor:pointer;transition:color .18s;
+  color:rgba(232,237,245,.32);font-size:.6rem;font-weight:700;
+  letter-spacing:.06em;text-transform:uppercase;gap:4px;border:none;background:none;
+  min-height:60px;-webkit-tap-highlight-color:transparent;
+}
+#bottom-nav .bn-tab.active{color:var(--a)}
+#bottom-nav .bn-tab svg{width:24px;height:24px;transition:transform .18s}
+#bottom-nav .bn-tab.active svg{transform:scale(1.15)}
+#bottom-nav .bn-ind{
+  position:absolute;top:0;height:2.5px;
+  background:linear-gradient(90deg,var(--a),var(--b));
+  border-radius:0 0 3px 3px;transition:left .25s cubic-bezier(.4,0,.2,1),width .25s;
+}
+/* hide bottom nav on desktop */
+@media(min-width:768px){#bottom-nav{display:none!important}}
+
+/* body padding for bottom nav on mobile */
+@media(max-width:767px){
+  #s-app{padding-bottom:80px}
+  .view{padding-bottom:4px}
+}
+
+/* PC top nav */
+#pc-nav{display:none}
+@media(min-width:768px){#pc-nav{display:flex}}
+
+/* Quote area */
+#quote-bar{animation:fadeUp .5s cubic-bezier(.22,1,.36,1)}
+.qb-inner{background:rgba(8,20,45,.58);border:1px solid rgba(255,255,255,.09);
+  border-radius:14px;padding:12px 18px;position:relative;overflow:hidden}
+.qb-inner::before{content:'❝';position:absolute;right:12px;top:4px;font-size:2.4rem;
+  color:rgba(var(--ar),var(--ag),var(--ab),.1);line-height:1;pointer-events:none}
+#q-text{font-size:clamp(.8rem,.85rem,1rem);line-height:1.55}
+@media(max-width:767px){
+  .qb-inner{padding:10px 14px}
+  #q-text{font-size:.82rem}
+}
+
+/* ── Cumulative bar chart ─────────────────────────────────── */
+.cum-wrap{position:relative;width:100%;overflow-x:auto;
+  -webkit-overflow-scrolling:touch;scrollbar-width:none}
+.cum-wrap::-webkit-scrollbar{display:none}
+.cum-wrap svg{display:block;touch-action:pan-x}
+.cum-tip{position:absolute;background:rgba(10,18,36,.97);
+  border:1px solid rgba(255,255,255,.18);border-radius:10px;
+  padding:8px 14px;font-size:.76rem;pointer-events:none;
+  opacity:0;transition:opacity .15s;white-space:nowrap;z-index:30;
+  backdrop-filter:blur(12px);font-weight:600;line-height:1.6;
+  transform:translateX(-50%);min-width:160px;text-align:center}
+.cum-tip.on{opacity:1}
+/* Grand total badge at top of last bar */
+.cum-total{font-family:'Bebas Neue',sans-serif;letter-spacing:.05em}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@keyframes taskIn{from{opacity:0;transform:translateX(-5px)}to{opacity:1;transform:none}}
+@keyframes shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-7px)}40%,80%{transform:translateX(7px)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.45}}
+@keyframes spin{to{transform:rotate(360deg)}}
+.ati{animation:taskIn .2s ease}
+</style>
+</head>
+<body>
+<div id="bg"></div>
+
+<!-- ████ AUTH OVERLAY ████ -->
+<div id="s-auth" class="fixed inset-0 z-50 flex items-center justify-center p-4"
+  style="background:rgba(5,13,26,.95);backdrop-filter:blur(16px)">
+  <div class="gl-b w-full max-w-sm overflow-hidden relative" id="auth-card"
+    style="animation:fadeUp .4s cubic-bezier(.22,1,.36,1)">
+    <div class="flex border-b border-white/[.07]">
+      <button id="tab-l" onclick="switchTab('l')"
+        class="tab-a flex-1 py-4 text-xs font-bold tracking-widest uppercase transition-colors">Sign In</button>
+      <button id="tab-s" onclick="switchTab('s')"
+        class="tab-i flex-1 py-4 text-xs font-bold tracking-widest uppercase transition-colors">Create Account</button>
+    </div>
+
+    <!-- LOGIN -->
+    <div id="p-l" class="p-7">
+      <div class="bb text-4xl ac-tg mb-0.5 text-center tracking-widest">DISCIPLINE</div>
+      <div class="text-center text-xs text-white/35 uppercase tracking-widest mb-6">Daily Performance Tracker</div>
+      <div class="mb-3">
+        <label class="text-xs font-semibold text-white/35 uppercase tracking-wider block mb-1.5">Profile</label>
+        <select id="l-uid" class="inp" onchange="clearLE()"></select>
+      </div>
+      <div class="mb-4">
+        <label class="text-xs font-semibold text-white/35 uppercase tracking-wider block mb-1.5">Password</label>
+        <div class="relative">
+          <input id="l-pw" type="password" class="inp pr-10" placeholder="Enter password"
+            onkeydown="if(event.key==='Enter')doLogin()">
+          <button class="absolute right-3 top-1/2 -translate-y-1/2 text-white/28 hover:text-white/65 text-sm leading-none p-1"
+            onclick="toggleEye('l-pw')">👁</button>
+        </div>
+      </div>
+      <div class="text-xs text-red-400 min-h-[16px] mb-3" id="l-err"></div>
+      <button onclick="doLogin()" class="btn btn-ac w-full py-3 text-sm mb-3">Sign In →</button>
+      <div class="flex items-center gap-3 my-3">
+        <div class="flex-1 h-px bg-white/[.07]"></div>
+        <span class="text-xs text-white/22">or</span>
+        <div class="flex-1 h-px bg-white/[.07]"></div>
+      </div>
+      <button onclick="doSpectate()" class="btn btn-g w-full py-2.5 text-xs">👁 Continue as Spectator</button>
+      <div class="text-center text-white/20 text-xs mt-4 leading-5">No account yet? Use the <b class="text-white/40">Create Account</b> tab.</div>
+    </div>
+
+    <!-- SIGNUP -->
+    <div id="p-s" class="p-7 hidden">
+      <div class="bb text-4xl ac-tg mb-0.5 text-center tracking-widest">DISCIPLINE</div>
+      <div class="text-center text-xs text-white/35 uppercase tracking-widest mb-5">Create Account</div>
+      <div class="av w-14 h-14 mx-auto mb-4 text-xl ac-al" id="av-pre"
+        style="color:var(--a);border-color:rgba(var(--ar),var(--ag),var(--ab),.38)">?</div>
+      <div class="mb-3">
+        <label class="text-xs font-semibold text-white/35 uppercase tracking-wider block mb-1.5">Display Name</label>
+        <input id="su-n" type="text" class="inp" placeholder="e.g. Alex Rivera" maxlength="24"
+          oninput="onSuN()" onkeydown="if(event.key==='Enter')document.getElementById('su-p').focus()">
+      </div>
+      <div class="mb-3">
+        <label class="text-xs font-semibold text-white/35 uppercase tracking-wider block mb-1.5">Password</label>
+        <div class="relative">
+          <input id="su-p" type="password" class="inp pr-10" placeholder="Min 4 characters" maxlength="32"
+            oninput="onSuP()" onkeydown="if(event.key==='Enter')doSignup()">
+          <button class="absolute right-3 top-1/2 -translate-y-1/2 text-white/28 hover:text-white/65 text-sm leading-none p-1"
+            onclick="toggleEye('su-p')">👁</button>
+        </div>
+        <div class="mt-1.5 h-1 bg-white/[.06] rounded-full overflow-hidden">
+          <div id="pw-b" class="pwb h-full"></div>
+        </div>
+      </div>
+      <div class="mb-4">
+        <label class="text-xs font-semibold text-white/35 uppercase tracking-wider block mb-1.5">Theme Color</label>
+        <div class="flex gap-2.5 flex-wrap" id="su-sw"></div>
+      </div>
+      <div class="text-xs text-red-400 min-h-[14px] mb-1" id="su-e"></div>
+      <div class="text-xs text-green-400 min-h-[14px] mb-3" id="su-ok"></div>
+      <button onclick="doSignup()" class="btn btn-ac w-full py-3 text-sm">Create Account →</button>
+    </div>
+    <!-- Loading overlay -->
+    <div id="auth-loading" class="absolute inset-0 flex flex-col items-center justify-center z-20 rounded-xl"
+      style="background:rgba(5,13,26,.92);backdrop-filter:blur(8px)">
+      <div style="width:32px;height:32px;border:3px solid rgba(255,255,255,.12);border-top-color:var(--a);
+        border-radius:50%;animation:spin .8s linear infinite"></div>
+      <div class="text-sm text-white/55 mt-4 font-medium tracking-wide">Connecting to server…</div>
+      <div id="auth-load-err" class="text-xs text-red-400 mt-2 text-center px-6 hidden"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ████ MAIN APP ████ -->
+<div id="s-app" class="hidden relative z-10 max-w-5xl mx-auto px-3 md:px-4 pb-4 pt-4">
+
+  <!-- ─── HEADER ─── -->
+  <header class="gl flex items-center justify-between px-4 py-3 mb-4 gap-3"
+    style="animation:fadeUp .4s ease">
+    <div class="bb text-2xl md:text-[1.6rem] ac-tg tracking-widest leading-none flex-shrink-0">DISCIPLINE</div>
+    <div id="h-dt" class="flex-1 text-center text-xs text-white/28 tracking-wide hidden md:block"></div>
+    <div class="flex items-center gap-2">
+      <!-- user chip -->
+      <div class="flex items-center gap-1.5 bg-white/[.04] border border-white/[.07] px-2.5 py-1.5 rounded-full">
+        <div id="h-dot" class="w-2 h-2 rounded-full flex-shrink-0"></div>
+        <span id="h-nm" class="text-xs font-semibold tracking-wide max-w-[100px] truncate"></span>
+      </div>
+      <!-- PC nav buttons -->
+      <div id="pc-nav" class="items-center gap-1.5 flex-wrap">
+        <button onclick="showV('vd')" id="nav-d" class="btn btn-sm">Home</button>
+        <button onclick="showV('vtk')" id="nav-tk" class="btn btn-sm">Tasks</button>
+        <button onclick="showV('vrv')" id="nav-rv" class="btn btn-sm">Review</button>
+        <button onclick="showV('vr')" id="nav-r" class="btn btn-sm">Ranking</button>
+        <button onclick="showV('vh')" id="nav-h" class="btn btn-sm">📅 History</button>
+        <button onclick="showV('vs')" id="nav-s" class="btn btn-sm">⚙ Settings</button>
+        <button onclick="doLogout()" class="btn btn-r btn-sm">Sign Out</button>
+      </div>
+      <!-- Mobile history icon -->
+      <button onclick="showV('vh')" class="md:hidden btn btn-sm px-3" title="History">📅</button>
+    </div>
+  </header>
+
+  <!-- ════════ VIEW: HOME ════════ -->
+  <div id="vd" class="view on">
+
+    <!-- Quote of the Day -->
+    <div id="quote-bar" class="mb-3">
+      <div class="qb-inner">
+        <p id="q-text" class="text-white/75 leading-relaxed italic pr-8"></p>
+        <div class="flex items-center gap-2 mt-1.5">
+          <span id="q-author" class="text-xs font-semibold ac"></span>
+          <span class="text-white/20 text-xs">·</span>
+          <span id="q-role" class="text-xs text-white/35"></span>
+          <span class="ml-auto text-[10px] text-white/18 uppercase tracking-widest">Daily Quote</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Alert banner -->
+    <div id="alert-tmr" class="alert-b hidden">
+      <div class="alert-dot"></div>
+      <div class="flex-1 min-w-0">
+        <span class="text-sm font-bold text-red-400">Alert: Tomorrow's target not set!</span>
+        <span class="text-xs text-white/38 ml-1.5 hidden sm:inline">It's past 20:00 JST.</span>
+      </div>
+      <button onclick="scrollToTarget()" class="btn btn-sm btn-ac flex-shrink-0">Set →</button>
+    </div>
+
+    <!-- Today header -->
+    <div class="gl mb-3 px-4 py-4 flex items-center justify-between gap-3">
+      <div>
+        <div class="text-xs text-white/32 uppercase tracking-widest mb-0.5" id="f-wd"></div>
+        <div class="fday bb text-[clamp(2.8rem,11vw,4.8rem)] leading-none" id="f-d"></div>
+        <div class="text-sm text-white/40 tracking-wide mt-0.5" id="f-my"></div>
+      </div>
+      <div class="text-right">
+        <div class="text-xs text-white/28 uppercase tracking-widest mb-0.5">Score</div>
+        <div id="f-sc" class="nx ac-tg">0</div>
+        <div class="text-xs text-white/28 mt-0.5">pts (JST)</div>
+      </div>
+    </div>
+
+    <!-- Wake-up + Score row -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
+
+      <!-- Wake-up -->
+      <div class="gl p-4">
+        <div class="sl"><span class="dot5 ac-dot"></span>Wake-Up Lock
+          <span class="text-white/20 text-[10px] font-normal ml-0.5">JST</span></div>
+        <div id="wk-u">
+          <div class="text-xs text-white/30 mb-2">Now: <span id="wk-now" class="ac font-semibold"></span></div>
+          <input type="time" id="wk-in" class="inp bb text-2xl md:text-3xl py-2.5 mb-3 tracking-wider">
+          <button onclick="lockWK()" class="btn btn-ac w-full py-3 text-sm font-bold tracking-wide">
+            ⚡ LOCK IN NOW</button>
+        </div>
+        <div id="wk-l" class="hidden">
+          <div class="inline-flex items-center gap-1.5 bg-white/[.05] border border-white/[.09]
+            rounded-md px-2.5 py-1 text-xs font-semibold text-white/40 tracking-wider uppercase mb-2">
+            🔒 Locked Today</div>
+          <div id="wk-t" class="nx ac-tg mb-0.5"></div>
+          <div id="wk-dt" class="text-xs text-white/32 tracking-wide mb-1"></div>
+          <div id="wk-vs-info"></div>
+        </div>
+        <!-- Tomorrow target -->
+        <div class="mt-4 pt-3.5 border-t border-white/[.07]">
+          <div class="sl mb-1.5">
+            <span class="dot5" style="background:#f5c842;box-shadow:0 0 5px #f5c842"></span>
+            Tomorrow's Target</div>
+          <div id="tgt-display"></div>
+        </div>
+      </div>
+
+      <!-- Score breakdown + streak -->
+      <div class="gl p-4">
+        <div class="sl"><span class="dot5" style="background:var(--a);box-shadow:0 0 6px var(--a)"></span>
+          Today's Score</div>
+        <div id="sc-v" class="nx ac-tg">0</div>
+        <div id="sc-r" class="flex flex-col gap-1.5 pb-3 border-b border-white/[.07] mt-2.5"></div>
+        <div class="flex justify-between items-center mt-3">
+          <div>
+            <div id="stk-v" class="nl leading-none mb-0.5">🔥 0</div>
+            <div class="text-xs text-white/32 uppercase tracking-wider">Day Streak</div>
+          </div>
+          <div class="text-right">
+            <div class="text-xs text-white/28 uppercase tracking-wider mb-0.5">Best</div>
+            <div id="best-v" class="nm leading-none" style="color:#f5c842">0</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Chart (dashboard) -->
+    <div class="gl p-4">
+      <div class="sl"><span class="dot5 ac-dot"></span>Weekly Performance — 7 Days</div>
+      <div class="flex flex-wrap gap-3 mb-2" id="ch-lg"></div>
+      <div class="chart-wrap">
+        <svg id="ch-sv" width="100%" viewBox="0 0 760 160" preserveAspectRatio="xMidYMid meet"
+          style="overflow:visible;display:block"></svg>
+        <div id="ch-tip" class="ctip"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════ VIEW: TASKS ════════ -->
+  <div id="vtk" class="view">
+    <div class="gl p-4 mb-3">
+      <div class="sl">
+        <span class="dot5" style="background:#f5c842;box-shadow:0 0 6px #f5c842"></span>
+        Task Management</div>
+      <div id="tk-add" class="flex gap-2 mb-2.5">
+        <input type="text" id="tk-in" class="inp flex-1 py-2 text-sm" placeholder="Add a task…"
+          onkeydown="if(event.key==='Enter')addTask()">
+        <select id="tk-pr" class="inp w-[68px] py-2 text-xs px-2">
+          <option value="low">Low</option>
+          <option value="med" selected>Med</option>
+          <option value="high">High</option>
+        </select>
+        <button onclick="addTask()"
+          class="btn btn-ac px-3 py-2 text-xl leading-none font-bold flex-shrink-0">+</button>
+      </div>
+      <ul id="tk-l" class="flex flex-col gap-1.5 max-h-[60vh] overflow-y-auto pr-0.5"></ul>
+      <div class="mt-2.5 pt-2.5 border-t border-white/[.07] flex justify-between">
+        <span class="text-xs text-white/32" id="tk-pr2">0 / 0 done</span>
+        <span class="text-xs font-bold ac" id="tk-pts">+0 pts</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════ VIEW: REVIEW ════════ -->
+  <div id="vrv" class="view">
+
+    <!-- ── 7-Habit Cumulative Stats ── -->
+    <div class="gl p-4 mb-3" id="ful-stat-panel">
+      <!-- Perfect Days hero badge -->
+      <div class="flex items-center justify-between mb-3">
+        <div class="sl mb-0">
+          <span class="dot5" style="background:linear-gradient(135deg,var(--a),var(--b));box-shadow:0 0 6px var(--a)"></span>
+          Habit Stats — All Time
+        </div>
+        <div class="flex flex-col items-center px-3 py-1.5 rounded-xl"
+          style="background:linear-gradient(135deg,rgba(var(--ar),var(--ag),var(--ab),.18),rgba(var(--br),var(--bg2),var(--bb),.12));border:1px solid rgba(var(--ar),var(--ag),var(--ab),.28)">
+          <div id="pday-count" class="bb leading-none ac-tg" style="font-size:clamp(1.6rem,7vw,2.4rem)">0</div>
+          <div class="text-[9px] text-white/40 uppercase tracking-widest mt-0.5 whitespace-nowrap">Perfect Days</div>
+        </div>
+      </div>
+      <!-- 7-bar SVG chart + tooltip -->
+      <div class="relative w-full" id="ful7-wrap">
+        <svg id="ful7-sv" style="display:block;width:100%;overflow:visible"></svg>
+        <div id="ful7-tip" class="cum-tip"></div>
+      </div>
+      <!-- tiny legend hint -->
+      <div class="text-center text-[10px] text-white/22 mt-2 tracking-wide">tap any bar for details</div>
+    </div>
+
+    <!-- Fulfillment -->
+    <div class="gl p-4 mb-3">
+      <div class="sl">
+        <span class="dot5" style="background:#3ddba0;box-shadow:0 0 6px #3ddba0"></span>
+        Daily Fulfillment</div>
+      <div id="fl-l" class="flex flex-col gap-2"></div>
+      <div class="mt-3 pt-2.5 border-t border-white/[.07] flex justify-between items-center">
+        <span class="text-xs text-white/32" id="fl-c">0 / 7</span>
+        <span class="text-xs font-bold ac" id="fl-p">+0 pts</span>
+      </div>
+    </div>
+    <!-- Journal -->
+    <div class="gl p-4">
+      <div class="sl">
+        <span class="dot5" style="background:#e75fc3;box-shadow:0 0 6px #e75fc3"></span>
+        Daily Journal
+        <span class="text-white/20 text-[10px] font-normal ml-0.5">— private</span></div>
+      <textarea id="jnl-ta" class="jnl-area"
+        placeholder="How did today go? What did you learn?..."
+        onblur="saveJournal()"></textarea>
+      <div class="flex items-center justify-between mt-2">
+        <div id="jnl-saved" class="text-xs text-green-400 min-h-[14px]"></div>
+        <button onclick="saveJournal()" class="btn btn-sm ac-al px-3 text-xs ac">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════ VIEW: RANKING ════════ -->
+  <div id="vr" class="view">
+    <div class="gl p-4 mb-3">
+      <div class="sl"><span class="dot5" style="background:#f5c842;box-shadow:0 0 6px #f5c842"></span>
+        Rankings — Today (JST)</div>
+      <div id="rk-l" class="flex flex-col gap-2.5"></div>
+    </div>
+    <!-- Chart (ranking) -->
+    <div class="gl p-4">
+      <div class="sl"><span class="dot5 ac-dot"></span>Weekly Performance — All Users</div>
+      <div class="flex flex-wrap gap-3 mb-2" id="rk-ch-lg"></div>
+      <div class="chart-wrap">
+        <svg id="rk-ch-sv" width="100%" viewBox="0 0 760 160" preserveAspectRatio="xMidYMid meet"
+          style="overflow:visible;display:block"></svg>
+        <div id="rk-ch-tip" class="ctip"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════ VIEW: SETTINGS ════════ -->
+  <div id="vs" class="view">
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+      <!-- Change PW -->
+      <div class="gl p-4">
+        <div class="sl"><span class="dot5 ac-dot"></span>Change Password</div>
+        <div class="mb-3">
+          <label class="text-xs text-white/35 uppercase tracking-wider block mb-1.5">Current</label>
+          <div class="relative">
+            <input id="s-cp" type="password" class="inp pr-9" placeholder="Current password">
+            <button class="absolute right-3 top-1/2 -translate-y-1/2 text-white/28 hover:text-white/65 text-sm p-1"
+              onclick="toggleEye('s-cp')">👁</button>
+          </div>
+        </div>
+        <div class="mb-3">
+          <label class="text-xs text-white/35 uppercase tracking-wider block mb-1.5">New Password</label>
+          <div class="relative">
+            <input id="s-np" type="password" class="inp pr-9" placeholder="Min 4 characters">
+            <button class="absolute right-3 top-1/2 -translate-y-1/2 text-white/28 hover:text-white/65 text-sm p-1"
+              onclick="toggleEye('s-np')">👁</button>
+          </div>
+        </div>
+        <div class="text-xs text-red-400 min-h-[14px] mb-3" id="s-pe"></div>
+        <button onclick="changePw()" class="btn btn-ac w-full py-2.5 text-sm">Update Password</button>
+      </div>
+      <!-- Theme -->
+      <div class="gl p-4">
+        <div class="sl"><span class="dot5 ac-dot"></span>Theme Gradient</div>
+        <div class="av w-14 h-14 mx-auto mb-1 text-xl bb" id="s-av"
+          style="color:var(--a);border-color:rgba(var(--ar),var(--ag),var(--ab),.38)"></div>
+        <div id="s-av-label" class="text-center text-[10px] text-white/30 mb-3 tracking-widest uppercase">Blue / Purple</div>
+        <div class="flex gap-2 flex-wrap justify-center mb-4" id="s-sw"></div>
+        <button onclick="saveColor()" class="btn btn-ac w-full py-2.5 text-sm">Save Theme</button>
+      </div>
+    </div>
+    <!-- Sign out (mobile prominent) -->
+    <div class="mt-3 md:hidden">
+      <button onclick="doLogout()" class="btn btn-r w-full py-3 text-sm font-bold">Sign Out</button>
+    </div>
+  </div>
+
+  <!-- ════════ VIEW: HISTORY ════════ -->
+  <div id="vh" class="view">
+    <div class="flex items-center gap-3 mb-4">
+      <button onclick="goBackFromHistory()" class="btn btn-sm px-3">← Back</button>
+      <h2 class="bb text-xl ac tracking-wider leading-none">📅 Activity History</h2>
+      <div class="ml-auto text-xs text-white/28 hidden sm:block">Past 60 days</div>
+    </div>
+    <div class="gl p-3.5 mb-3 flex items-center gap-3 flex-wrap">
+      <div id="hst-uname" class="font-semibold text-sm"></div>
+      <div class="ml-auto text-xs text-white/25">Click to expand</div>
+    </div>
+    <div id="hst-list" class="flex flex-col gap-2.5"></div>
+    <div id="hst-empty" class="hidden text-center py-14 text-white/25 text-sm">
+      No history yet. Start logging!</div>
+  </div>
+
+  <!-- ════════ VIEW: PROFILE (read-only) ════════ -->
+  <div id="vp" class="view">
+    <div class="flex items-center gap-3 mb-3">
+      <button onclick="goBackFromProfile()" class="btn btn-sm px-3">← Back</button>
+      <div class="av w-9 h-9 text-sm bb" id="pv-av"></div>
+      <h2 id="pv-nm" class="bb text-xl tracking-wider leading-none"></h2>
+    </div>
+    <div class="ro-b">👁 View Only Mode</div>
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
+      <div class="gl p-4">
+        <div class="sl"><span class="dot5 ac-dot"></span>Wake-Up Lock</div>
+        <div id="pv-wk" class="nx ac-tg">--:--</div>
+        <div id="pv-ws" class="text-xs text-white/32 mt-1"></div>
+      </div>
+      <div class="gl p-4">
+        <div class="sl"><span class="dot5" style="background:var(--a);box-shadow:0 0 6px var(--a)"></span>
+          Today's Score</div>
+        <div id="pv-sc" class="nx ac-tg mb-2">0</div>
+        <div id="pv-sr" class="flex flex-col gap-1.5 text-sm"></div>
+      </div>
+    </div>
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
+      <div class="gl p-4">
+        <div class="sl"><span class="dot5" style="background:#3ddba0;box-shadow:0 0 6px #3ddba0"></span>
+          Daily Fulfillment</div>
+        <div id="pv-fl" class="flex flex-col gap-2"></div>
+        <div class="mt-3 pt-2.5 border-t border-white/[.07] flex justify-between">
+          <span class="text-xs text-white/32" id="pv-fc">0 / 7</span>
+          <span class="text-xs font-bold ac" id="pv-fp">+0 pts</span>
+        </div>
+      </div>
+      <div class="gl p-4">
+        <div class="sl"><span class="dot5" style="background:#f5c842;box-shadow:0 0 6px #f5c842"></span>
+          Tasks</div>
+        <ul id="pv-tk" class="flex flex-col gap-1.5 max-h-[200px] overflow-y-auto pr-0.5"></ul>
+        <div class="mt-2.5 pt-2.5 border-t border-white/[.07] flex justify-between">
+          <span class="text-xs text-white/32" id="pv-tp">0 / 0 done</span>
+          <span class="text-xs font-bold ac" id="pv-tpts">+0 pts</span>
+        </div>
+      </div>
+    </div>
+    <div class="gl p-4">
+      <div class="sl"><span class="dot5 ac-dot"></span>Weekly Performance (JST)</div>
+      <div class="chart-wrap">
+        <svg id="pv-sv" width="100%" viewBox="0 0 760 160" preserveAspectRatio="xMidYMid meet"
+          style="overflow:visible;display:block"></svg>
+        <div id="pv-tip" class="ctip"></div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /s-app -->
+
+<!-- ════════ BOTTOM NAV (mobile) ════════ -->
+<nav id="bottom-nav">
+  <div class="bn-ind" id="bn-ind"></div>
+  <button class="bn-tab active" id="bnt-d" onclick="showV('vd')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+      stroke-linecap="round" stroke-linejoin="round">
+      <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/>
+      <rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>
+    </svg>
+    <span>Home</span>
+  </button>
+  <button class="bn-tab" id="bnt-tk" onclick="showV('vtk')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+      stroke-linecap="round" stroke-linejoin="round">
+      <path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/>
+    </svg>
+    <span>Tasks</span>
+  </button>
+  <button class="bn-tab" id="bnt-rv" onclick="showV('vrv')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+      stroke-linecap="round" stroke-linejoin="round">
+      <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+    </svg>
+    <span>Review</span>
+  </button>
+  <button class="bn-tab" id="bnt-r" onclick="showV('vr')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+      stroke-linecap="round" stroke-linejoin="round">
+      <path d="M18 20V10M12 20V4M6 20v-6"/>
+    </svg>
+    <span>Rank</span>
+  </button>
+  <button class="bn-tab" id="bnt-s" onclick="showV('vs')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+      stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="3"/>
+      <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/>
+    </svg>
+    <span>Settings</span>
+  </button>
+</nav>
+
+<div id="toast"></div>
+
+<script>
+// ════════════════════════════════════════════════════════════════════
+//  DISCIPLINE — Powered by Supabase
+// ════════════════════════════════════════════════════════════════════
+
+// ─── Supabase 接続情報 ───────────────────────────────────────────────
+const SUPABASE_URL = "https://jiheounmegplnznejmps.supabase.co";
+const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImppaGVvdW5tZWdwbG56bmVqbXBzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE1NTIwNjUsImV4cCI6MjA4NzEyODA2NX0.pL1HCYUA40IJC_FxUNNy-EV_2UWJF2xzjbVF_WAwQY8";
+
+// supabase-js v2 UMD グローバル: window.supabase.createClient
+const _sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+// ─── Gradient theme presets ──────────────────────────────────────────
+// Each preset is {a: colorA, b: colorB, label}
+// Stored in DB as comma-separated string "colorA,colorB" for full backward compat
+const GRADIENTS = [
+  // ── Colorful ─────────────────────────────────────────
+  {a:'#4f8ef7', b:'#7c5cfc', label:'Blue / Purple'},
+  {a:'#7c5cfc', b:'#e75fc3', label:'Purple / Pink'},
+  {a:'#3ddba0', b:'#4f8ef7', label:'Mint / Blue'},
+  {a:'#5fe7d0', b:'#7c5cfc', label:'Cyan / Purple'},
+  {a:'#f78c4f', b:'#f5c842', label:'Orange / Gold'},
+  {a:'#f75f5f', b:'#f78c4f', label:'Red / Orange'},
+  {a:'#e75fc3', b:'#f78c4f', label:'Pink / Orange'},
+  {a:'#3ddba0', b:'#f5c842', label:'Green / Yellow'},
+  {a:'#4f8ef7', b:'#3ddba0', label:'Blue / Mint'},
+  {a:'#f5c842', b:'#f75f5f', label:'Gold / Red'},
+  // ── Premium & Monochrome ──────────────────────────────
+  {a:'#f5c842', b:'#d4a010', label:'Pure Gold'},
+  {a:'#0a1628', b:'#1e3a5f', label:'Deep Navy'},
+  {a:'#dc143c', b:'#8b0000', label:'Crimson'},
+  {a:'#0d1e38', b:'#5fe7d0', label:'Navy / Cyan'},
+  {a:'#dc143c', b:'#f78c4f', label:'Crimson / Fire'},
+  // ── Monochrome / High-Contrast ────────────────────────
+  {a:'#e8edf5', b:'#9bb3c9', label:'Pure White'},
+  {a:'#1a1a2e', b:'#16213e', label:'Pure Black'},
+  {a:'#708090', b:'#b0c0d0', label:'Slate Grey'},
+  {a:'#e8edf5', b:'#f5c842', label:'White / Gold'},
+  {a:'#1a1a2e', b:'#f5c842', label:'Black / Gold'},
+  {a:'#1a1a2e', b:'#e8edf5', label:'Black / White'},
+  {a:'#708090', b:'#f5c842', label:'Grey / Gold'},
+  {a:'#e8edf5', b:'#7c5cfc', label:'White / Purple'},
+];
+// Legacy COLORS kept for any internal fallback
+const COLORS = GRADIENTS.map(g=>g.a);
+// Helpers
+function colorStr(g){ return g.a+','+g.b; }
+function parseColor(c){
+  // Accepts "colorA,colorB" or bare "colorA" for backward compat
+  const parts = String(c||'').split(',');
+  const a = parts[0]||GRADIENTS[0].a;
+  const b = parts[1]||a;
+  return {a, b};
+}
+function colorA(c){ return parseColor(c).a; }
+function gradientLabel(c){
+  const {a,b}=parseColor(c);
+  const g=GRADIENTS.find(x=>x.a===a&&x.b===b);
+  return g?g.label:a.toUpperCase();
+}
+const FUL = [
+  {id:'exec',   icon:'⚡', label:'Execution',        desc:'Completed planned tasks for today'},
+  {id:'self',   icon:'📚', label:'Self-Improvement',  desc:'Reading, studying, or skill-building'},
+  {id:'know',   icon:'💡', label:'New Knowledge',     desc:'Learned something new today'},
+  {id:'contrib',icon:'🤝', label:'Contribution',      desc:'Helped or showed care for others'},
+  {id:'output', icon:'📢', label:'Public Output',     desc:'SNS, blog, or shared ideas'},
+  {id:'health', icon:'💪', label:'Health',            desc:'Exercise & good nutrition'},
+  {id:'mind',   icon:'🧠', label:'Mindset',           desc:'Stayed positive, calm & focused'},
+];
+const FPTS = 7, PTS = {low:5, med:10, high:15};
+const EMPTY_FULFILL = () => ({exec:false,self:false,know:false,contrib:false,output:false,health:false,mind:false});
+
+// ─── State ──────────────────────────────────────────────────────────
+const DB = { users: {} };
+const S  = { uid:null, spectate:false, viewUid:null, suColor:colorStr(GRADIENTS[0]), setColor:null,
+             activeView:null, prevView:null, prevViewH:null };
+
+// ─── JST helpers ────────────────────────────────────────────────────
+function jstNow(){const n=new Date();return new Date(n.getTime()+n.getTimezoneOffset()*60000+32400000)}
+function jstDate(){const j=jstNow();return j.getFullYear()+'-'+p2(j.getMonth()+1)+'-'+p2(j.getDate())}
+function jstOff(d){const j=jstNow();j.setDate(j.getDate()+d);return j.getFullYear()+'-'+p2(j.getMonth()+1)+'-'+p2(j.getDate())}
+function jstTime(){const j=jstNow();return p2(j.getHours())+':'+p2(j.getMinutes())}
+function jstHour(){return jstNow().getHours()}
+function p2(n){return String(n).padStart(2,'0')}
+function datePrev(ds){const d=new Date(ds+'T12:00:00');d.setDate(d.getDate()-1);return d.toISOString().slice(0,10)}
+function dateLabel(ds){return new Date(ds+'T12:00:00').toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric',year:'2-digit'})}
+
+// ─── Supabase 通信層 ──────────────────────────────────────────────────
+// DataCloneError 対策:
+//   送信前に JSON.parse(JSON.stringify(...)) で完全な plain object に変換。
+//   Supabase の Proxy / 内部オブジェクトを一切渡さない。
+async function syncUser(uid){
+  const u = DB.users[uid];
+  if(!u) return;
+  // 必ず plain object に変換して送る
+  let plainHistory = {};
+  try { plainHistory = JSON.parse(JSON.stringify(u.history || {})); } catch(_){}
+  const payload = {
+    uid:        String(uid),
+    name:       String(u.name || ''),
+    pw:         String(u.pw   || ''),
+    color:      String(u.color || COLORS[0]),
+    lastactive: Number(u.lastActive || 0),
+    history:    plainHistory,
+    nid:        Number(u.nid || 10)
+  };
+  try {
+    const { error } = await _sb.from('users').upsert(payload, { onConflict: 'uid' });
+    if(error) console.warn('[Supabase] syncUser error:', error.message);
+  } catch(e) {
+    console.warn('[Supabase] syncUser exception:', e.message);
+  }
+}
+
+// ─── データヘルパー ───────────────────────────────────────────────────
+function ensureUser(uid){
+  if(!DB.users[uid]) DB.users[uid]={name:'',pw:'',color:colorStr(GRADIENTS[0]),lastActive:0,history:{},nid:10};
+  if(!DB.users[uid].history) DB.users[uid].history={};
+  if(!DB.users[uid].nid)     DB.users[uid].nid=10;
+}
+function getDay(uid, date){
+  ensureUser(uid);
+  if(!DB.users[uid].history[date]){
+    DB.users[uid].history[date]={
+      wakeupLocked:false, wakeupTime:null, tomorrowTarget:null,
+      todos:[], fulfill:EMPTY_FULFILL(), journal:''
+    };
+  }
+  const d = DB.users[uid].history[date];
+  if(d.tomorrowTarget===undefined) d.tomorrowTarget=null;
+  if(d.journal===undefined)        d.journal='';
+  if(!d.fulfill)                   d.fulfill=EMPTY_FULFILL();
+  return d;
+}
+
+// ─── スコア計算 ────────────────────────────────────────────────────────
+function calcWakeScore(uid, date){
+  const day = DB.users[uid]?.history?.[date];
+  if(!day||!day.wakeupLocked||!day.wakeupTime) return {pts:0,label:'Not locked',cls:'wvs-no',icon:'⏰'};
+  const prev    = datePrev(date);
+  const prevDay = DB.users[uid]?.history?.[prev];
+  if(!prevDay||!prevDay.tomorrowTarget)
+    return {pts:0,label:'No target set yesterday — 0 pts',cls:'wvs-no',icon:'⚠️'};
+  const [ah,am] = day.wakeupTime.split(':').map(Number);
+  const [th,tm] = prevDay.tomorrowTarget.split(':').map(Number);
+  const diff = (ah*60+am)-(th*60+tm); // positive=late, negative=early
+  const abs  = Math.abs(diff);
+  const str  = abs===0 ? 'On time' : (abs+'min '+(diff<0?'early':'late'));
+  if(diff<0 && abs>=30) return {pts:+10, label:str+': +10 pts', cls:'wvs-up', icon:'🚀'};
+  if(diff<=0)           return {pts:+5,  label:str+': +5 pts',  cls:'wvs-up', icon:'✅'};
+  if(diff<30)           return {pts:-5,  label:str+': −5 pts',  cls:'wvs-dn', icon:'😴'};
+                        return {pts:-10, label:str+': −10 pts', cls:'wvs-dn', icon:'❌'};
+}
+function calcScore(uid, date){
+  const d = DB.users[uid]?.history?.[date];
+  if(!d) return 0;
+  let s = 0;
+  if(d.wakeupLocked && d.wakeupTime) s += calcWakeScore(uid,date).pts;
+  (d.todos||[]).forEach(t => { if(t.done) s += PTS[t.priority]; });
+  Object.values(d.fulfill||{}).forEach(v => { if(v) s += FPTS; });
+  return s;
+}
+function calcStreak(uid){
+  let s=0, best=0;
+  for(let i=0;i<90;i++){
+    if(calcScore(uid,jstOff(-i))>0){ s++; if(s>best) best=s; }
+    else if(i>0) break;
+  }
+  return {streak:s, best};
+}
+
+// ─── ユーティリティ ───────────────────────────────────────────────────
+function initials(name){return(name||'?').trim().split(/\s+/).slice(0,2).map(w=>w[0]||'').join('').toUpperCase()||'?'}
+function hexRGB(hex){return[parseInt(hex.slice(1,3),16),parseInt(hex.slice(3,5),16),parseInt(hex.slice(5,7),16)]}
+function needsAlert(uid){if(!uid)return false;const td=jstDate(),day=getDay(uid,td);return jstHour()>=20&&!day.tomorrowTarget}
+function el(id){return document.getElementById(id)}
+function set(id,v){const e=el(id);if(e)e.textContent=v}
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+function toggleEye(id){const e=el(id);e.type=e.type==='password'?'text':'password'}
+let _tt;
+function toast(msg,ms=2400){const e=el('toast');e.textContent=msg;e.classList.add('on');clearTimeout(_tt);_tt=setTimeout(()=>e.classList.remove('on'),ms)}
+function srow(label,color,val){return`<div class="flex justify-between items-center text-sm"><span class="text-white/38">${label}</span><span class="font-semibold" style="color:${color}">${val} pts</span></div>`}
+
+// ─── テーマ ─────────────────────────────────────────────────────────
+function setTheme(c){
+  const {a,b}=parseColor(c);
+  const [r,g,bv]=hexRGB(a);
+  const [r2,g2,b2]=hexRGB(b);
+  const ds=document.documentElement.style;
+  ds.setProperty('--a',a);  ds.setProperty('--ar',r);  ds.setProperty('--ag',g);  ds.setProperty('--ab',bv);
+  ds.setProperty('--b',b);  ds.setProperty('--br',r2); ds.setProperty('--bg2',g2); ds.setProperty('--bb',b2);
+  // Compute relative luminance of --a to pick readable text color on accent backgrounds
+  // Formula: 0.299R + 0.587G + 0.114B (perceived brightness, 0-255)
+  const lum = (0.299*r + 0.587*g + 0.114*bv) / 255;
+  ds.setProperty('--text-on-accent', lum > 0.60 ? '#111111' : '#ffffff');
+  // For very light --a, also ensure ac-tg gradient uses darker fallback so text stays visible on dark bg
+  ds.setProperty('--tg-from', a);
+  ds.setProperty('--tg-to',   b);
+}
+
+// ─── ローディングオーバーレイ ─────────────────────────────────────────
+function showAuthLoading(show, errMsg=''){
+  const ov=el('auth-loading');
+  if(!ov) return;
+  ov.classList.toggle('hidden',!show);
+  const er=el('auth-load-err');
+  if(er){ er.textContent=errMsg; er.classList.toggle('hidden',!errMsg); }
+}
+
+// ─── Auth UI ──────────────────────────────────────────────────────────
+function switchTab(t){
+  const il=t==='l';
+  const A='tab-a flex-1 py-4 text-xs font-bold tracking-widest uppercase transition-colors';
+  const B='tab-i flex-1 py-4 text-xs font-bold tracking-widest uppercase transition-colors';
+  el('tab-l').className=il?A:B; el('tab-s').className=il?B:A;
+  el('p-l').classList.toggle('hidden',!il); el('p-s').classList.toggle('hidden',il);
+  el('l-err').textContent=''; el('su-e').textContent=''; el('su-ok').textContent='';
+}
+function clearLE(){ el('l-err').textContent='' }
+function rebuildSel(){
+  const s=el('l-uid'), prev=s.value;
+  s.innerHTML='<option value="">— Select profile —</option>';
+  Object.keys(DB.users).forEach(uid=>{
+    const o=document.createElement('option');
+    o.value=uid; o.textContent=DB.users[uid].name;
+    s.appendChild(o);
+  });
+  if(prev && s.querySelector(`[value="${prev}"]`)) s.value=prev;
+}
+function doLogin(){
+  const uid=el('l-uid').value, pw=el('l-pw').value;
+  if(!uid){el('l-err').textContent='Please select a profile.';return}
+  if(pw!==DB.users[uid]?.pw){el('l-err').textContent='Incorrect password.';shake();return}
+  S.uid=uid; S.spectate=false; enterApp();
+}
+function doSpectate(){
+  const uids=Object.keys(DB.users);
+  if(!uids.length){el('l-err').textContent='No users yet — create an account first.';return}
+  S.uid=uids[0]; S.spectate=true; enterApp();
+}
+function doLogout(){
+  S.uid=null; S.spectate=false; S.viewUid=null;
+  el('l-pw').value=''; el('l-err').textContent=''; rebuildSel();
+  el('s-app').classList.add('hidden'); el('s-auth').classList.remove('hidden');
+  const bn=el('bottom-nav'); if(bn) bn.classList.remove('logged-in');
+  clearInterval(window._jt);
+}
+function shake(){const c=el('auth-card');c.style.animation='none';void c.offsetWidth;c.style.animation='shake .35s ease'}
+function onSuN(){el('av-pre').textContent=el('su-n').value.trim()?initials(el('su-n').value.trim()):'?';el('su-e').textContent=''}
+function onSuP(){
+  const p=el('su-p').value, bar=el('pw-b');
+  let str=0;
+  if(p.length>=4)str++; if(p.length>=8)str++; if(/[A-Z0-9]/.test(p))str++; if(/[^A-Za-z0-9]/.test(p))str++;
+  bar.style.width=['0%','28%','56%','80%','100%'][str];
+  bar.style.background=['','#f75f5f','#f5c842','#4f8ef7','#3ddba0'][str];
+}
+async function doSignup(){
+  const name=el('su-n').value.trim(), pw=el('su-p').value;
+  el('su-e').textContent=''; el('su-ok').textContent='';
+  if(name.length<2){el('su-e').textContent='Name must be at least 2 characters.';return}
+  if(pw.length<4){el('su-e').textContent='Password must be at least 4 characters.';return}
+  // Generate unique uid from name + timestamp
+  const uid = name.toLowerCase().replace(/\s+/g,'_').replace(/[^a-z0-9_]/g,'')+'_'+Date.now().toString(36);
+  DB.users[uid] = {name, pw, color:S.suColor, lastActive:Date.now(), history:{}, nid:10};
+  getDay(uid, jstDate()); // initialise today
+  await syncUser(uid);    // persist to Supabase
+  el('su-ok').textContent='Account created! Signing you in…';
+  rebuildSel();
+  setTimeout(()=>{ S.uid=uid; S.spectate=false; enterApp(); }, 800);
+}
+function initSuColors(){
+  const row=el('su-sw'); row.innerHTML=''; S.suColor=colorStr(GRADIENTS[0]);
+  GRADIENTS.forEach((g,i)=>{
+    const cs=g.a+','+g.b;
+    const b=mkGradSwatch(g,i===0,c2=>{
+      S.suColor=c2;
+      document.querySelectorAll('#su-sw .sw').forEach(x=>x.classList.remove('on')); b.classList.add('on');
+      const {a}=parseColor(c2), [r,gv,bv]=hexRGB(a), av=el('av-pre');
+      av.style.background=`rgba(${r},${gv},${bv},.14)`;
+      av.style.borderColor=`rgba(${r},${gv},${bv},.38)`;
+      av.style.color=a;
+    }); row.appendChild(b);
+  });
+}
+function initSetColors(){
+  const uid=S.uid, uc=DB.users[uid]?.color||colorStr(GRADIENTS[0]);
+  const row=el('s-sw'); row.innerHTML=''; S.setColor=uc;
+  GRADIENTS.forEach(g=>{
+    const cs=g.a+','+g.b;
+    const active=(cs===uc)||(g.a===uc); // backward compat: match single-color too
+    const b=mkGradSwatch(g,active,c2=>{
+      S.setColor=c2;
+      document.querySelectorAll('#s-sw .sw').forEach(x=>x.classList.remove('on')); b.classList.add('on');
+      setTheme(c2); updateSetAv(c2);
+      const gl=el('s-av-label'); if(gl) gl.textContent=gradientLabel(c2);
+    }); row.appendChild(b);
+  });
+}
+function mkSwatch(color,active,cb){const b=document.createElement('button');b.className='sw'+(active?' on':'');b.style.background=color;b.onclick=()=>cb(color);return b}
+function mkGradSwatch(grad,active,cb){
+  const b=document.createElement('button');
+  b.className='sw'+(active?' on':'');
+  b.style.background='linear-gradient(135deg,'+grad.a+','+grad.b+')';
+  b.title=grad.label||'';
+  b.onclick=()=>cb(grad.a+','+grad.b);
+  return b;
+}
+function updateSetAv(c){
+  const av=el('s-av');
+  const {a,b}=parseColor(c);
+  const [r,g,bv]=hexRGB(a);
+  av.style.background=`linear-gradient(135deg,rgba(${r},${g},${bv},.22),rgba(${hexRGB(b).join(',')},0.22))`;
+  av.style.borderColor=`rgba(${r},${g},${bv},.45)`;
+  av.style.color=a;
+}
+
+// ─── App entry / exit ─────────────────────────────────────────────────
+function enterApp(){
+  el('s-auth').classList.add('hidden'); el('s-app').classList.remove('hidden');
+  const u=DB.users[S.uid]; setTheme(u.color);
+  const {a:ca,b:cb}=parseColor(u.color);
+  el('h-nm').textContent = S.spectate ? '👁 Spectator' : u.name;
+  el('h-dot').style.cssText = 'background:linear-gradient(135deg,'+ca+','+cb+');box-shadow:0 0 7px '+ca;
+  renderFDate();
+  clearInterval(window._jt);
+  // Every 60 s: refresh clock, alert banner, ranking Last Active labels
+  window._jt = setInterval(()=>{
+    const nw=el('wk-now'); if(nw) nw.textContent=jstTime()+' JST';
+    renderFDate(); checkAlertBanner();
+    if(el('vr')?.classList.contains('on')) renderRanking();
+  }, 60000);
+  const bn=el('bottom-nav'); if(bn) bn.classList.add('logged-in');
+  showV('vd');
+}
+
+// ─── View router ──────────────────────────────────────────────────────
+function showV(id){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('on'));
+  el(id).classList.add('on');
+  // PC nav
+  ['nav-d','nav-tk','nav-rv','nav-r','nav-h','nav-s'].forEach(nb=>{
+    const e=el(nb); if(!e) return;
+    e.classList.remove('btn-ac'); e.style.background='rgba(255,255,255,.05)';
+  });
+  const pcMap={vd:'nav-d',vtk:'nav-tk',vrv:'nav-rv',vr:'nav-r',vh:'nav-h',vs:'nav-s'};
+  if(pcMap[id]){const e=el(pcMap[id]);if(e){e.classList.add('btn-ac');e.style.background='';}}
+  // Bottom nav
+  ['bnt-d','bnt-tk','bnt-rv','bnt-r','bnt-s'].forEach(t=>{const e=el(t);if(e)e.classList.remove('active')});
+  const bnMap={vd:'bnt-d',vtk:'bnt-tk',vrv:'bnt-rv',vr:'bnt-r',vs:'bnt-s'};
+  if(bnMap[id]){const e=el(bnMap[id]);if(e)e.classList.add('active');}
+  // Render
+  S.activeView=id;
+  if(id==='vd')  renderDash();
+  if(id==='vtk') renderTasksView();
+  if(id==='vrv') renderReviewView();
+  if(id==='vr')  renderRankingView();
+  if(id==='vh'){ S.prevViewH=S.activeView&&S.activeView!=='vh'?S.activeView:'vd'; renderHistory(); }
+  if(id==='vs')  renderSettings();
+  if(id==='vp')  renderProfile();
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+function viewProfile(uid){ S.prevView=S.activeView||'vd'; S.viewUid=uid; showV('vp') }
+function goBackFromHistory(){ showV(S.prevViewH||'vd') }
+function goBackFromProfile(){ showV(S.prevView||'vd') }
+function scrollToTarget(){
+  const inp=el('tmr-tgt-inp');
+  if(inp){ inp.focus(); inp.scrollIntoView({behavior:'smooth',block:'center'}); }
+  else{
+    showV('vd');
+    setTimeout(()=>{const i=el('tmr-tgt-inp');if(i){i.focus();i.scrollIntoView({behavior:'smooth',block:'center'});}},350);
+  }
+}
+
+// ─── Settings ─────────────────────────────────────────────────────────
+function renderSettings(){
+  const u=DB.users[S.uid];
+  el('s-cp').value=''; el('s-np').value=''; el('s-pe').textContent='';
+  el('s-av').textContent=initials(u.name); updateSetAv(u.color); initSetColors();
+  const gl=el('s-av-label'); if(gl) gl.textContent=gradientLabel(u.color);
+}
+function changePw(){
+  const uid=S.uid, cp=el('s-cp').value, np=el('s-np').value;
+  if(cp!==DB.users[uid].pw){el('s-pe').textContent='Current password is incorrect.';return}
+  if(np.length<4){el('s-pe').textContent='New password must be at least 4 characters.';return}
+  DB.users[uid].pw=np; syncUser(uid);
+  el('s-cp').value=''; el('s-np').value=''; el('s-pe').textContent='';
+  toast('✓ Password updated');
+}
+function saveColor(){
+  const uid=S.uid, c=S.setColor||DB.users[uid].color;
+  DB.users[uid].color=c; syncUser(uid); setTheme(c);
+  const {a,b}=parseColor(c);
+  el('h-dot').style.cssText='background:linear-gradient(135deg,'+a+','+b+');box-shadow:0 0 7px '+a;
+  toast('✓ Theme saved — '+gradientLabel(c));
+}
+
+// ─── Home render ─────────────────────────────────────────────────────
+function renderDash(){
+  const uid=S.uid, td=jstDate(), day=getDay(uid,td);
+  renderQuote();
+  renderFDate(); checkAlertBanner();
+  renderWK(uid,td,day); renderTomorrowTarget(uid,td,day);
+  renderScore(uid,td);
+  drawChart('ch-sv','ch-lg',null,'ch-tip',null);
+}
+function renderTasksView(){
+  const uid=S.uid, td=jstDate(), day=getDay(uid,td);
+  renderTasks(uid,td,day);
+}
+function renderReviewView(){
+  const uid=S.uid, td=jstDate(), day=getDay(uid,td);
+  drawFulfillChart(uid);
+  renderFulfill(uid,td,day);
+  renderJournal(uid,td,day);
+}
+
+// ─── 7-Habit Cumulative Bar Chart ────────────────────────────────────
+// Short display labels and per-item accent colors
+const FUL_META = [
+  {id:'exec',   short:'EX',   icon:'⚡', color:'#4f8ef7'},
+  {id:'self',   short:'SELF', icon:'📚', color:'#7c5cfc'},
+  {id:'know',   short:'KNOW', icon:'💡', color:'#f5c842'},
+  {id:'contrib',short:'CON',  icon:'🤝', color:'#3ddba0'},
+  {id:'output', short:'OUT',  icon:'📢', color:'#e75fc3'},
+  {id:'health', short:'HE',   icon:'💪', color:'#f78c4f'},
+  {id:'mind',   short:'MI',   icon:'🧠', color:'#5fe7d0'},
+];
+
+function drawFulfillChart(uid, animate=true){
+  const svg=el('ful7-sv');
+  const tipEl=el('ful7-tip');
+  if(!svg||!tipEl) return;
+
+  // ── 1. Scan all history (O(N), no DOM writes here) ───────────────
+  const hist=DB.users[uid]?.history||{};
+  const dates=Object.keys(hist);
+
+  const counts={};
+  FUL.forEach(f=>{ counts[f.id]=0; });
+  let perfectDays=0;
+
+  dates.forEach(d=>{
+    const ful=hist[d]?.fulfill||{};
+    FUL.forEach(f=>{ if(ful[f.id]) counts[f.id]++; });
+    if(FUL.every(f=>ful[f.id])) perfectDays++;
+  });
+
+  set('pday-count', perfectDays);
+
+  // ── 2. Layout ────────────────────────────────────────────────────
+  const wrap=el('ful7-wrap');
+  const W       = wrap ? Math.max(wrap.getBoundingClientRect().width||320, 280) : 320;
+  const N       = FUL_META.length;
+  const PAD_L   = 10, PAD_R = 10, PAD_T = 42, PAD_B = 38;
+  const SVG_H   = 228;
+  const PLOT_H  = SVG_H - PAD_T - PAD_B;
+  const AVAIL_W = W - PAD_L - PAD_R;
+  const STEP    = Math.floor(AVAIL_W / N);
+  const BAR_W   = Math.max(22, Math.floor(STEP * 0.64));
+  const maxVal  = Math.max(...Object.values(counts), 1);
+  const baseY   = PAD_T + PLOT_H;
+  const barX    = i => PAD_L + i*STEP + Math.floor((STEP - BAR_W)/2);
+
+  svg.setAttribute('viewBox', `0 0 ${W} ${SVG_H}`);
+  svg.setAttribute('preserveAspectRatio','xMidYMid meet');
+  svg.style.width='100%';
+  svg.style.height='';
+  svg.style.aspectRatio=`${W} / ${SVG_H}`;
+  svg.innerHTML='';
+
+  const defs=svgEl('defs');
+  svg.appendChild(defs);
+
+  // ── 3. SVG filters + per-bar gradients ────────────────────────────
+  // Glow filter
+  const filt=svgEl('filter',{id:'ful-glow',x:'-35%',y:'-35%',width:'170%',height:'170%'});
+  const feBlur=svgEl('feGaussianBlur',{stdDeviation:'5',result:'blur','in':'SourceGraphic'});
+  const feMerge=svgEl('feMerge');
+  feMerge.appendChild(svgEl('feMergeNode',{in:'blur'}));
+  feMerge.appendChild(svgEl('feMergeNode',{in:'SourceGraphic'}));
+  filt.appendChild(feBlur); filt.appendChild(feMerge);
+  defs.appendChild(filt);
+
+  FUL_META.forEach((m,i)=>{
+    const g=svgEl('linearGradient',{id:`fg${i}`,x1:'0',y1:'0',x2:'0',y2:'1'});
+    g.appendChild(svgEl('stop',{offset:'0%', 'stop-color':m.color,'stop-opacity':'1'}));
+    g.appendChild(svgEl('stop',{offset:'100%','stop-color':m.color,'stop-opacity':'0.3'}));
+    defs.appendChild(g);
+  });
+
+  // ── 4. Grid lines ─────────────────────────────────────────────────
+  [0.25, 0.5, 0.75, 1].forEach(f=>{
+    const y=PAD_T + PLOT_H*(1-f);
+    svg.appendChild(svgEl('line',{
+      x1:PAD_L, x2:W-PAD_R, y1:y, y2:y,
+      stroke:'rgba(255,255,255,.05)', 'stroke-width':'1', 'stroke-dasharray':'3,5'
+    }));
+  });
+
+  // ── 5. Bars + animation ───────────────────────────────────────────
+  const DUR   = '0.75s';                          // animation duration
+  const EASE  = 'cubic-bezier(0.22,1,0.36,1)';   // spring-like ease-out
+
+  FUL_META.forEach((m,i)=>{
+    const count  = counts[m.id]||0;
+    const targetH= Math.max(count>0?6:2, Math.round(PLOT_H * count / maxVal));
+    const x      = barX(i);
+    const targetY= baseY - targetH;
+    // Stagger: each bar starts 0.07s after the previous
+    const delay  = animate ? (i * 0.07).toFixed(2)+'s' : '0s';
+
+    // Helper to add animateElement to a parent
+    const addAnim=(parent, attr, from, to)=>{
+      if(!animate) return;
+      const an=svgEl('animate',{
+        attributeName:attr,
+        from: String(from), to: String(to),
+        dur: DUR, begin: delay,
+        fill:'freeze', calcMode:'spline',
+        keyTimes:'0;1', keySplines:'0.22 1 0.36 1'
+      });
+      parent.appendChild(an);
+    };
+
+    // ── Glow shadow
+    if(count>0){
+      const glow=svgEl('rect',{
+        x:x-3, y:animate?baseY:targetY-3,
+        width:BAR_W+6, height:animate?2:targetH+3,
+        rx:'7', ry:'7',
+        fill:m.color, opacity:'0.20', filter:'url(#ful-glow)'
+      });
+      addAnim(glow,'height', 2, targetH+3);
+      addAnim(glow,'y', baseY, targetY-3);
+      svg.appendChild(glow);
+    }
+
+    // ── Main bar
+    const bar=svgEl('rect',{
+      x, y: animate?baseY:targetY,
+      width:BAR_W, height: animate?2:targetH,
+      rx:'7', ry:'7',
+      fill: count>0 ? `url(#fg${i})` : 'rgba(255,255,255,.06)'
+    });
+    addAnim(bar,'height', 2, targetH);
+    addAnim(bar,'y', baseY, targetY);
+    svg.appendChild(bar);
+
+    // ── Value label (appears above bar at final position)
+    const valY   = targetY - 7;
+    const valFS  = count>=100 ? '12' : '15';
+    // Halo behind number
+    if(count>0){
+      const halo=svgEl('text',{
+        x:x+BAR_W/2, y:valY, 'text-anchor':'middle',
+        fill:m.color, opacity:'0', stroke:m.color, 'stroke-width':'5',
+        'font-size':valFS,'font-family':'Bebas Neue,sans-serif','font-weight':'900'
+      });
+      halo.textContent=count;
+      if(animate){
+        const opAn=svgEl('animate',{
+          attributeName:'opacity', from:'0', to:'0.45',
+          dur:'0.3s', begin: (parseFloat(delay)+0.55).toFixed(2)+'s',
+          fill:'freeze'
+        });
+        halo.appendChild(opAn);
+      } else { halo.setAttribute('opacity','0.45'); }
+      svg.appendChild(halo);
+    }
+    const valLabel=svgEl('text',{
+      x:x+BAR_W/2, y:valY, 'text-anchor':'middle',
+      fill: count>0 ? '#ffffff' : 'rgba(232,237,245,.18)',
+      opacity: animate ? '0' : '1',
+      'font-size':valFS,'font-family':'Bebas Neue,sans-serif',
+      'font-weight':'900','letter-spacing':'0.04em'
+    });
+    valLabel.textContent=count;
+    if(animate && count>0){
+      const opAn=svgEl('animate',{
+        attributeName:'opacity', from:'0', to:'1',
+        dur:'0.3s', begin:(parseFloat(delay)+0.55).toFixed(2)+'s',
+        fill:'freeze'
+      });
+      valLabel.appendChild(opAn);
+    } else if(!animate){ valLabel.setAttribute('opacity','1'); }
+    svg.appendChild(valLabel);
+
+    // ── Icon below bar
+    svg.appendChild(Object.assign(svgEl('text',{
+      x:x+BAR_W/2, y:baseY+17, 'text-anchor':'middle', 'font-size':'14',
+      fill: count>0 ? 'rgba(232,237,245,.88)' : 'rgba(232,237,245,.22)'
+    }), {textContent:m.icon}));
+
+    // ── Short label below icon
+    svg.appendChild(Object.assign(svgEl('text',{
+      x:x+BAR_W/2, y:baseY+30, 'text-anchor':'middle',
+      'font-size':'9','font-family':'Inter,sans-serif','font-weight':'700',
+      'letter-spacing':'0.07em',
+      fill: count>0 ? m.color : 'rgba(232,237,245,.18)'
+    }), {textContent:m.short}));
+
+    // ── Hit area (full column height) for tap/hover
+    const hit=svgEl('rect',{
+      x, y:PAD_T, width:BAR_W, height:PLOT_H+PAD_B,
+      fill:'transparent', style:'cursor:pointer'
+    });
+    const showTip=ev=>{
+      const rect=svg.getBoundingClientRect();
+      const scaleX=rect.width/W;
+      const cx=(x+BAR_W/2)*scaleX;
+      const tipLeft=Math.min(Math.max(cx,80), rect.width-80);
+      tipEl.innerHTML=
+        `<div style="font-size:.78rem;color:${m.color};margin-bottom:3px">${m.icon} ${FUL.find(f=>f.id===m.id)?.label||m.short}</div>`+
+        `<div style="font-size:1.15rem;font-family:'Bebas Neue',sans-serif;color:#fff;letter-spacing:.05em">${count} times achieved</div>`+
+        `<div style="font-size:.68rem;color:rgba(232,237,245,.38);margin-top:2px">out of ${dates.length} recorded days</div>`;
+      tipEl.style.left=tipLeft+'px';
+      tipEl.style.top=(PAD_T*scaleX-70)+'px';
+      tipEl.style.transform='translateX(-50%)';
+      tipEl.classList.add('on');
+    };
+    const hideTip=()=>tipEl.classList.remove('on');
+    hit.addEventListener('mouseenter',showTip);
+    hit.addEventListener('mouseleave',hideTip);
+    hit.addEventListener('touchstart',showTip,{passive:true});
+    hit.addEventListener('touchend',  hideTip,{passive:true});
+    svg.appendChild(hit);
+  });
+}
+
+function renderRankingView(){
+  renderRanking();
+  drawChart('rk-ch-sv','rk-ch-lg',null,'rk-ch-tip',null);
+}
+function checkAlertBanner(){
+  const ab=el('alert-tmr'); if(!ab) return;
+  ab.classList.toggle('hidden', !needsAlert(S.uid)||S.spectate);
+}
+function renderFDate(){
+  const j=jstNow();
+  const WD=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  const MO=['January','February','March','April','May','June','July','August','September','October','November','December'];
+  set('f-wd',WD[j.getDay()]); set('f-d',p2(j.getDate())); set('f-my',MO[j.getMonth()]+' '+j.getFullYear());
+  set('h-dt',WD[j.getDay()]+', '+MO[j.getMonth()]+' '+j.getDate()+', '+j.getFullYear()+' — JST');
+}
+
+// ─── Wake-up section ──────────────────────────────────────────────────
+function renderWK(uid, td, day){
+  const locked=day.wakeupLocked, ro=S.spectate;
+  el('wk-u').classList.toggle('hidden', locked||ro);
+  el('wk-l').classList.toggle('hidden', !locked&&!ro);
+  const nw=el('wk-now'); if(nw) nw.textContent=jstTime()+' JST';
+  const inp=el('wk-in');
+  if(inp&&!inp._touched){ inp.value=jstTime(); inp.addEventListener('change',()=>{inp._touched=true},{once:true}); }
+  if(locked){
+    set('wk-t', day.wakeupTime||'--:--');
+    set('wk-dt', jstNow().toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'})+' (JST)');
+    const ws=calcWakeScore(uid,td);
+    const vi=el('wk-vs-info');
+    if(vi){
+      const prev=datePrev(td), prevDay=DB.users[uid]?.history?.[prev];
+      const tgtStr=prevDay?.tomorrowTarget ? 'Target: '+prevDay.tomorrowTarget+' — ' : '';
+      vi.innerHTML=`<div class="wvs ${ws.cls}">${ws.icon} ${tgtStr}${ws.label}</div>`;
+    }
+  } else if(ro){
+    set('wk-t','--:--'); set('wk-dt','Not locked yet today');
+  }
+}
+function lockWK(){
+  if(S.spectate) return;
+  const uid=S.uid, td=jstDate(), day=getDay(uid,td);
+  const t=el('wk-in').value||jstTime();
+  day.wakeupLocked=true; day.wakeupTime=t;
+  touchActive(uid); syncUser(uid);
+  renderWK(uid,td,day); renderScore(uid,td); renderRanking();
+  const ws=calcWakeScore(uid,td);
+  toast(ws.pts>0 ? `⚡ Locked! ${ws.icon} ${ws.label}` : ws.pts<0 ? `⚡ Locked. ${ws.icon} ${ws.label}` : `⚡ Wake-up locked. ${ws.icon} ${ws.label}`, 3200);
+  checkAlertBanner();
+}
+
+// ─── Tomorrow target ──────────────────────────────────────────────────
+function renderTomorrowTarget(uid, td, day){
+  const wrap=el('tgt-display'); if(!wrap) return;
+  const tgt=day.tomorrowTarget;
+  if(S.spectate){ wrap.innerHTML='<div class="text-sm text-white/28 italic">Private — not visible in spectator mode</div>'; return }
+  if(tgt){
+    wrap.innerHTML=`<div class="tgt-set flex items-center justify-between gap-3">
+      <div>
+        <div class="text-xs text-white/38 uppercase tracking-wider mb-0.5">Target set for tomorrow</div>
+        <div class="bb text-2xl ac tracking-wide">${tgt} JST</div>
+      </div>
+      <button onclick="clearTomorrowTarget()" class="btn btn-sm text-xs text-white/35 hover:text-white/70">✕ Clear</button>
+    </div>`;
+  } else {
+    wrap.innerHTML=`<div class="tgt-unset">
+      <div class="text-xs text-white/35 uppercase tracking-wider mb-2">No target set yet</div>
+      <div class="flex gap-2 items-center">
+        <input type="time" id="tmr-tgt-inp" class="inp py-2 bb text-xl tracking-wider flex-1" value="06:00">
+        <button onclick="saveTomorrowTarget()" class="btn btn-ac btn-sm flex-shrink-0">Set Target</button>
+      </div>
+      ${jstHour()>=20?'<div class="text-xs text-red-400 mt-2 font-semibold">⚠ After 20:00 JST — please set your target now</div>':''}
+    </div>`;
+  }
+}
+function saveTomorrowTarget(){
+  if(S.spectate) return;
+  const uid=S.uid, td=jstDate(), day=getDay(uid,td);
+  const inp=el('tmr-tgt-inp'); if(!inp) return;
+  day.tomorrowTarget=inp.value;
+  syncUser(uid);
+  renderTomorrowTarget(uid,td,day); checkAlertBanner();
+  toast('🎯 Tomorrow\'s target set: '+inp.value+' JST');
+}
+function clearTomorrowTarget(){
+  if(S.spectate) return;
+  const uid=S.uid, td=jstDate(), day=getDay(uid,td);
+  day.tomorrowTarget=null; syncUser(uid);
+  renderTomorrowTarget(uid,td,day); checkAlertBanner();
+  toast('Target cleared');
+}
+
+// ─── Score card ───────────────────────────────────────────────────────
+function renderScore(uid, td){
+  const day=DB.users[uid]?.history?.[td];
+  const ws=day?.wakeupLocked ? calcWakeScore(uid,td) : {pts:0,label:'—',cls:'',icon:'⏰'};
+  let ts=0, fs=0;
+  (day?.todos||[]).forEach(t=>{ if(t.done) ts+=PTS[t.priority]; });
+  Object.values(day?.fulfill||{}).forEach(v=>{ if(v) fs+=FPTS; });
+  const tot=ws.pts+ts+fs;
+  set('sc-v',tot); set('f-sc',tot);
+  const wuColor=ws.pts>0?'#3ddba0':ws.pts<0?'#f75f5f':'rgba(232,237,245,.35)';
+  const wuLabel=day?.wakeupLocked?`<span class="text-[10px] text-white/32 ml-1 font-normal">${ws.label}</span>`:'';
+  el('sc-r').innerHTML=
+    `<div class="flex justify-between items-center text-sm"><span class="text-white/38 flex items-center gap-1">⏰ Wake-Up${wuLabel}</span><span class="font-semibold" style="color:${wuColor}">${ws.pts>0?'+':''}${ws.pts} pts</span></div>`+
+    srow('✅ Tasks','#3ddba0',ts)+
+    srow('⭐ Fulfillment','#f5c842',fs)+
+    `<div class="flex justify-between items-center pt-2 border-t border-white/[.07] mt-1"><span class="font-semibold">Total</span><span class="font-bold">${tot} pts</span></div>`;
+  const {streak,best}=calcStreak(uid); set('stk-v','🔥 '+streak); set('best-v',best);
+}
+
+// ─── Fulfillment ──────────────────────────────────────────────────────
+function renderFulfill(uid, td, day){
+  const list=el('fl-l'); list.innerHTML=''; let checked=0;
+  FUL.forEach(f=>{
+    const on=!!(day.fulfill?.[f.id]); if(on) checked++;
+    const lbl=document.createElement('label');
+    lbl.className='flex items-start gap-3 cursor-pointer group'+(S.spectate?' pointer-events-none':'');
+    lbl.innerHTML=`<input type="checkbox" class="ck mt-0.5" ${on?'checked':''} ${S.spectate?'disabled':''}
+      onchange="toggleFul('${f.id}',this.checked)">
+      <div class="flex-1 min-w-0">
+        <div class="flex items-center gap-2 text-sm font-medium transition-colors ${on?'text-white':'text-white/60 group-hover:text-white/85'}">
+          <span class="text-base leading-none">${f.icon}</span><span>${f.label}</span>
+          ${on?`<span class="text-[10px] font-bold ac leading-none ml-0.5">+${FPTS}pts</span>`:''}
+        </div>
+        <div class="text-xs text-white/28 mt-0.5 leading-snug">${f.desc}</div>
+      </div>`;
+    list.appendChild(lbl);
+  });
+  set('fl-c',checked+' / '+FUL.length); set('fl-p','+'+(checked*FPTS)+' pts');
+}
+function toggleFul(fid, val){
+  if(S.spectate) return;
+  const uid=S.uid, td=jstDate(), day=getDay(uid,td);
+  // 1. Update local DB
+  day.fulfill[fid]=val;
+  // 2. Sync to Supabase
+  syncUser(uid);
+  // 3. Refresh UI
+  renderFulfill(uid,td,day); renderScore(uid,td); renderRanking();
+  // 4. If Review tab is active, immediately redraw the cumulative chart
+  if(S.activeView==='vrv') drawFulfillChart(uid, true);
+  toast(val ? '⭐ +'+FPTS+' pts' : 'Unchecked');
+}
+
+// ─── Tasks ────────────────────────────────────────────────────────────
+function renderTasks(uid, td, day){
+  const list=el('tk-l'); list.innerHTML='';
+  const tasks=day.todos||[]; let done=0, pts=0;
+  const pc={low:'pl',med:'pm',high:'ph'};
+  tasks.forEach(t=>{
+    if(t.done){ done++; pts+=PTS[t.priority]; }
+    const li=document.createElement('li');
+    li.className='flex items-center gap-2.5 bg-white/[.03] border border-white/[.06] rounded-lg px-3 py-2.5 ati';
+    li.innerHTML=`<input type="checkbox" class="ck" ${t.done?'checked':''} ${S.spectate?'disabled':''}
+        onchange="toggleTask(${t.id},this.checked)">
+      <span class="flex-1 text-sm min-w-0 truncate ${t.done?'line-through text-white/30':''}">${esc(t.text)}</span>
+      <span class="text-[10px] font-bold px-2 py-0.5 rounded-full flex-shrink-0 ${pc[t.priority]}">${t.priority}</span>
+      ${!S.spectate?`<button class="text-white/22 hover:text-red-400 text-sm transition-colors flex-shrink-0 leading-none" onclick="delTask(${t.id})">✕</button>`:''}`;
+    list.appendChild(li);
+  });
+  set('tk-pr2',done+' / '+tasks.length+' done'); set('tk-pts','+'+pts+' pts');
+}
+function addTask(){
+  if(S.spectate) return;
+  const uid=S.uid, td=jstDate();
+  const inp=el('tk-in'), text=inp.value.trim(); if(!text) return;
+  const priority=el('tk-pr').value, day=getDay(uid,td);
+  DB.users[uid].nid=(DB.users[uid].nid||10)+1;
+  day.todos.push({id:DB.users[uid].nid, text, priority, done:false});
+  syncUser(uid); inp.value='';
+  renderTasks(uid,td,day); renderScore(uid,td); renderRanking();
+}
+function toggleTask(id, checked){
+  if(S.spectate) return;
+  const uid=S.uid, td=jstDate(), day=getDay(uid,td);
+  const t=day.todos.find(x=>x.id===id);
+  if(t){ t.done=checked; touchActive(uid); syncUser(uid); }
+  renderTasks(uid,td,day); renderScore(uid,td); renderRanking();
+}
+function delTask(id){
+  if(S.spectate) return;
+  const uid=S.uid, td=jstDate(), day=getDay(uid,td);
+  day.todos=day.todos.filter(x=>x.id!==id);
+  syncUser(uid);
+  renderTasks(uid,td,day); renderScore(uid,td); renderRanking();
+}
+
+// ─── Journal ─────────────────────────────────────────────────────────
+function renderJournal(uid, td, day){
+  const ta=el('jnl-ta'); if(!ta) return;
+  ta.value=day.journal||''; ta.disabled=S.spectate;
+  if(S.spectate) ta.placeholder='Journal is private and not visible in spectator mode.';
+  set('jnl-saved','');
+}
+function saveJournal(){
+  if(S.spectate) return;
+  const uid=S.uid, td=jstDate(), day=getDay(uid,td);
+  const ta=el('jnl-ta'); if(!ta) return;
+  day.journal=ta.value; syncUser(uid);
+  set('jnl-saved','✓ Saved'); setTimeout(()=>set('jnl-saved',''),2200);
+}
+
+// ─── Last Active ─────────────────────────────────────────────────────
+function touchActive(uid){
+  if(!DB.users[uid]) return;
+  DB.users[uid].lastActive=Date.now();
+  // syncUser is called by the caller after touching active
+}
+function relativeTime(ts){
+  if(!ts) return null;
+  const sec=Math.floor((Date.now()-ts)/1000);
+  if(sec<60)  return {label:'Active Now', cls:'la-now', dot:'la-dot'};
+  if(sec<3600){ const m=Math.floor(sec/60);  return {label:m+'m ago', cls:'', dot:'la-dot-off'} }
+  if(sec<86400){const h=Math.floor(sec/3600);return {label:h+'h ago', cls:'', dot:'la-dot-off'} }
+  const d=Math.floor(sec/86400); return {label:d+'d ago', cls:'', dot:'la-dot-off'};
+}
+
+// ─── Ranking ─────────────────────────────────────────────────────────
+function renderRanking(){
+  const td=jstDate();
+  const sc=Object.keys(DB.users)
+    .map(uid=>({uid, name:DB.users[uid].name, color:DB.users[uid].color,
+      score:calcScore(uid,td), streak:calcStreak(uid).streak}))
+    .sort((a,b)=>b.score-a.score);
+  const mx=Math.max(...sc.map(x=>x.score),1);
+  const medals=['🥇','🥈','🥉'], rc=['r1','r2','r3'];
+  const list=el('rk-l'); list.innerHTML='';
+  sc.forEach((s,i)=>{
+    const isMe=s.uid===S.uid&&!S.spectate;
+    const [r,g,b]=hexRGB(colorA(s.color));
+    const medal=i<3 ? medals[i] : `<span class="bb text-xl text-white/28 leading-none">#${i+1}</span>`;
+    const la=relativeTime(DB.users[s.uid].lastActive);
+    const laHtml=la
+      ? `<span class="la ${la.cls}"><span class="${la.dot}"></span>${la.label}</span>`
+      : `<span class="la"><span class="la-dot-off"></span>No activity</span>`;
+    const d=document.createElement('div');
+    d.className='flex items-center gap-3 bg-white/[.03] border border-white/[.07] rounded-xl px-4 py-3 transition-all '+(isMe?'ac-al2':'hover:bg-white/[.055] cursor-pointer');
+    if(!isMe) d.onclick=()=>viewProfile(s.uid);
+    d.innerHTML=`
+      <div class="av w-9 h-9 bb text-sm" style="background:rgba(${r},${g},${b},.16);border-color:rgba(${r},${g},${b},.38);color:${s.color}">${initials(s.name)}</div>
+      <div class="bb text-xl w-8 text-center flex-shrink-0 leading-none ${i<3?rc[i]:'text-white/28'}">${medal}</div>
+      <div class="flex-1 min-w-0">
+        <div class="flex justify-between items-center gap-2">
+          <div class="flex flex-col min-w-0">
+            <div class="flex items-center gap-2 flex-wrap">
+              <span class="text-sm font-semibold truncate">${esc(s.name)}</span>
+              ${isMe?'<span class="text-[10px] font-bold ac ac-al px-2 py-0.5 rounded-full flex-shrink-0">YOU</span>':''}
+              ${!isMe&&!S.spectate?'<span class="text-[10px] text-white/22 flex-shrink-0">→ view</span>':''}
+            </div>
+            ${laHtml}
+          </div>
+          <div class="bb text-2xl leading-none flex-shrink-0" style="color:${s.color}">${s.score}</div>
+        </div>
+        <div class="flex items-center gap-2 mt-1.5">
+          <div class="rbw"><div class="rb" style="width:${Math.round(s.score/mx*100)}%;background:linear-gradient(90deg,${s.color},${s.color}44)"></div></div>
+          <span class="text-xs text-white/28 flex-shrink-0">🔥 ${s.streak}d</span>
+        </div>
+      </div>`;
+    list.appendChild(d);
+  });
+}
+
+// ─── Chart ───────────────────────────────────────────────────────────
+function renderChart(){ drawChart('ch-sv','ch-lg',null,'ch-tip',null) }
+function drawChart(svgId, legId, dtId, tipId, focusUid){
+  const svg=el(svgId); if(!svg) return;
+  const leg=el(legId), dtl=dtId?el(dtId):null;
+
+  // ── Measure actual rendered container width ────────────────────────
+  // getBoundingClientRect is more reliable than clientWidth for SVGs
+  const wrap = svg.parentElement;
+  const containerW = (wrap ? wrap.getBoundingClientRect().width : 0) || 340;
+  const isMobile = containerW < 520;
+
+  // ── Virtual coordinate space ───────────────────────────────────────
+  // W=600 is the internal "canvas" width in SVG units.
+  // The viewBox + preserveAspectRatio handles scaling to any real width.
+  // Keeping W modest means font-size values in SVG units translate to
+  // visually large text on small screens (SVG units / px ratio is large).
+  const W       = 600;
+
+  // iPhone-first heights — taller chart = more visual breathing room
+  const H       = isMobile ? 220 : 200;   // total viewBox height
+  const LABEL_H = isMobile ?  32 :  26;   // bottom strip for day labels
+  const chartH  = H - LABEL_H;             // usable data area
+
+  // Padding: enough for axis labels on left, dots not clipped on edges
+  const PD_L    = isMobile ?  38 :  36;   // left padding (y-axis labels)
+  const PD_R    = isMobile ?  14 :  12;   // right padding
+  const PT      = isMobile ?  18 :  16;   // top padding
+  const PB      = isMobile ?  12 :  10;   // bottom of chart (above labels)
+
+  // Typography — ×2 bigger than before on mobile
+  const DAY_FS  = isMobile ?  18 :  12;   // day label font-size (SVG units)
+  const AX_FS   = isMobile ?  14 :  10;   // y-axis value font-size
+
+  // Dot sizes — finger-friendly
+  const DOT_R   = isMobile ? 8   :  5;    // regular dot radius
+  const DOT_R_L = isMobile ? 11  :  7;    // today (last) dot radius
+  const LINE_W  = isMobile ? '3' : '2.5'; // stroke-width
+
+  // ── Apply viewBox & aspect ratio ─────────────────────────────────
+  svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+  svg.setAttribute('preserveAspectRatio', 'xMidYMid meet');
+  svg.style.width       = '100%';
+  svg.style.height      = '';
+  svg.style.aspectRatio = `${W} / ${H}`;
+  svg.style.display     = 'block';
+  svg.style.overflow    = 'visible';
+
+  // ── Data ──────────────────────────────────────────────────────────
+  const days    = Array.from({length:7},(_,i)=>jstOff(i-6));
+  const labels  = days.map(d=>new Date(d+'T12:00:00').toLocaleDateString('en-US',{weekday:'short'}));
+  const targets = focusUid ? [focusUid] : Object.keys(DB.users).slice(0,6);
+  const scMap   = {}; targets.forEach(u=>{scMap[u]=days.map(d=>calcScore(u,d));});
+  const allMx   = Math.max(...Object.values(scMap).flat(), 1);
+
+  svg.innerHTML=''; if(leg) leg.innerHTML=''; if(dtl) dtl.innerHTML='';
+  const defs = svgEl('defs'); svg.appendChild(defs);
+
+  // ── Coordinate helpers ────────────────────────────────────────────
+  const xOf = i => PD_L + i*(W - PD_L - PD_R) / (days.length-1);
+  const yOf = s => PT   + (chartH - PT - PB) * (1 - s/allMx);
+
+  // ── Grid lines ────────────────────────────────────────────────────
+  [0, .25, .5, .75, 1].forEach(f=>{
+    const y = yOf(allMx * f);
+    svg.appendChild(svgEl('line',{x1:PD_L,x2:W-PD_R,y1:y,y2:y,
+      stroke:'rgba(255,255,255,.055)','stroke-width':'1','stroke-dasharray': f===0?'':''}));
+    if(f>0){
+      const tx=svgEl('text',{x:PD_L-5,y:y+AX_FS*0.35,
+        'text-anchor':'end',fill:'rgba(232,237,245,.35)',
+        'font-size':AX_FS,'font-family':'Inter,sans-serif'});
+      tx.textContent=Math.round(allMx*f);
+      svg.appendChild(tx);
+    }
+  });
+
+  // ── Series lines + dots ───────────────────────────────────────────
+  targets.forEach(uid=>{
+    const scores=scMap[uid];
+    const rawColor=DB.users[uid].color;
+    const {a:cA, b:cB}=parseColor(rawColor);  // primary and secondary theme colors
+    const pts=days.map((_,i)=>[xOf(i), yOf(scores[i])]);
+    const gid='g_'+uid.replace(/[^a-z0-9]/gi,'x');
+    const lid='l_'+uid.replace(/[^a-z0-9]/gi,'x'); // horizontal gradient for the line
+
+    // Vertical gradient for area fill (colorA → transparent)
+    const grad=svgEl('linearGradient',{id:gid,x1:'0',y1:'0',x2:'0',y2:'1'});
+    grad.appendChild(svgEl('stop',{offset:'0%','stop-color':cA,'stop-opacity':'0.28'}));
+    grad.appendChild(svgEl('stop',{offset:'100%','stop-color':cB,'stop-opacity':'0'}));
+    defs.appendChild(grad);
+
+    // Horizontal gradient for the line stroke (colorA → colorB left to right)
+    const lgrad=svgEl('linearGradient',{id:lid,x1:'0',y1:'0',x2:'1',y2:'0',
+      gradientUnits:'objectBoundingBox'});
+    lgrad.appendChild(svgEl('stop',{offset:'0%','stop-color':cA,'stop-opacity':'1'}));
+    lgrad.appendChild(svgEl('stop',{offset:'100%','stop-color':cB,'stop-opacity':'1'}));
+    defs.appendChild(lgrad);
+
+    const cv=curve(pts);
+    // Area fill — clipped at chartH
+    svg.appendChild(svgEl('path',{
+      d:cv+' L '+pts[pts.length-1][0]+','+(chartH+2)+' L '+pts[0][0]+','+(chartH+2)+' Z',
+      fill:'url(#'+gid+')'}));
+    // Line — uses horizontal gradient
+    svg.appendChild(svgEl('path',{d:cv,fill:'none',stroke:'url(#'+lid+')',
+      'stroke-width':LINE_W,'stroke-linecap':'round','stroke-linejoin':'round'}));
+
+    // Dots — draw hit-area circle first, then visual circle on top
+    pts.forEach(([x,y],di)=>{
+      const isLast=di===6;
+      const r  = isLast ? DOT_R_L : DOT_R;
+      // Interpolate dot color along the gradient (left=cA, right=cB)
+      const t  = di/(days.length-1);
+      // For simplicity use cA for first half, cB for second half; today always cB
+      const dotColor = isLast ? cB : (t<0.5 ? cA : cB);
+      // Invisible hit area (larger, for touch)
+      const hit=svgEl('circle',{cx:x,cy:y,r:r+8,fill:'transparent'});
+      hit.style.cursor='pointer';
+      // Visual dot
+      const dot=svgEl('circle',{cx:x,cy:y,r:r,
+        fill:isLast?dotColor:'rgba(5,13,26,.92)',
+        stroke:dotColor,'stroke-width': isLast?'0':'2.2'});
+      if(isLast){
+        // Glowing ring for today's dot
+        const ring=svgEl('circle',{cx:x,cy:y,r:r+4,
+          fill:'none',stroke:dotColor,'stroke-width':'1.5',opacity:'0.45'});
+        svg.appendChild(ring);
+      }
+      // Touch / hover tooltip
+      const showTip=ev=>{
+        const tip=el(tipId); if(!tip) return;
+        tip.textContent=DB.users[uid].name+': '+scores[di]+' pts';
+        tip.style.opacity='1';
+        const rect=svg.getBoundingClientRect();
+        const cx=(ev.clientX||ev.touches?.[0]?.clientX||0)-rect.left;
+        const cy=(ev.clientY||ev.touches?.[0]?.clientY||0)-rect.top;
+        tip.style.left=(cx+12)+'px';
+        tip.style.top =(cy-48)+'px';
+        tip.style.color=dotColor;
+      };
+      const hideTip=()=>{ const tip=el(tipId); if(tip) tip.style.opacity='0'; };
+      hit.addEventListener('mouseenter',showTip);
+      hit.addEventListener('touchstart',showTip,{passive:true});
+      hit.addEventListener('mouseleave',hideTip);
+      hit.addEventListener('touchend',hideTip,{passive:true});
+      svg.appendChild(hit);
+      svg.appendChild(dot);
+    });
+
+    if(leg){
+      const li=document.createElement('div');
+      li.className='flex items-center gap-2 text-xs text-white/45';
+      li.innerHTML=`<div class="w-3 h-3 rounded-sm flex-shrink-0" style="background:linear-gradient(135deg,${cA},${cB});box-shadow:0 0 6px ${cA}66"></div>${esc(DB.users[uid].name)}${uid===S.uid&&!S.spectate?'<span class="text-[10px] ac font-bold ml-0.5">(you)</span>':''}`;
+      leg.appendChild(li);
+    }
+  });
+
+  // ── Day labels — inside SVG, x-aligned with dots ─────────────────
+  labels.forEach((l,i)=>{
+    const isToday=i===6;
+    const tx=svgEl('text',{
+      x: xOf(i),
+      y: H - (isMobile ? 6 : 5),
+      'text-anchor': 'middle',
+      fill: isToday ? 'rgba(79,142,247,1)' : 'rgba(232,237,245,.42)',
+      'font-size': DAY_FS,
+      'font-weight': isToday ? '800' : '500',
+      'font-family': 'Inter,sans-serif'
+    });
+    tx.textContent = l + (isToday ? ' ★' : '');
+    svg.appendChild(tx);
+  });
+
+  // Legacy external label row
+  if(dtl){
+    labels.forEach((l,i)=>{
+      const sp=document.createElement('span');
+      sp.className='text-[11px] '+(i===6?'ac font-semibold':'text-white/25');
+      sp.textContent=l+(i===6?' ★':''); dtl.appendChild(sp);
+    });
+  }
+}
+function curve(pts){
+  if(pts.length<2) return '';
+  let d='M '+pts[0][0]+','+pts[0][1];
+  for(let i=1;i<pts.length;i++){
+    const [x0,y0]=pts[i-1],[x1,y1]=pts[i],cp=(x1-x0)*.38;
+    d+=' C '+(x0+cp)+','+y0+' '+(x1-cp)+','+y1+' '+x1+','+y1;
+  }
+  return d;
+}
+function svgEl(tag,attrs={}){
+  const e=document.createElementNS('http://www.w3.org/2000/svg',tag);
+  Object.entries(attrs).forEach(([k,v])=>e.setAttribute(k,v)); return e;
+}
+
+// ─── History ─────────────────────────────────────────────────────────
+function renderHistory(){
+  const uid=S.uid, u=DB.users[uid];
+  const uname=el('hst-uname');
+  if(uname){
+    const [r,g,b]=hexRGB(colorA(u.color));
+    uname.innerHTML=`<span class="av inline-flex w-7 h-7 bb text-xs mr-2" style="background:rgba(${r},${g},${b},.16);border-color:rgba(${r},${g},${b},.38);color:${u.color}">${initials(u.name)}</span><span class="font-semibold">${esc(u.name)}</span><span class="text-xs text-white/28 ml-2">(your history)</span>`;
+  }
+  const list=el('hst-list'); list.innerHTML='';
+  const hist=DB.users[uid]?.history||{};
+  const today=jstDate();
+  const dates=Object.keys(hist).sort((a,b)=>b.localeCompare(a)).slice(0,60);
+  if(!dates.length){ el('hst-empty').classList.remove('hidden'); return }
+  el('hst-empty').classList.add('hidden');
+  dates.forEach(date=>{
+    list.appendChild(buildHstCard(uid, date, hist[date], calcScore(uid,date), date===today, u.color));
+  });
+}
+function buildHstCard(uid, date, day, score, isToday, color){
+  const tasksDone=(day.todos||[]).filter(t=>t.done).length;
+  const tasksTotal=(day.todos||[]).length;
+  const fulChecked=Object.values(day.fulfill||{}).filter(Boolean).length;
+  const wrapper=document.createElement('div'); wrapper.className='hst-day';
+  const hd=document.createElement('div'); hd.className='hst-hd';
+  hd.innerHTML=`
+    <div class="flex-1 min-w-0">
+      <div class="flex items-center gap-3 flex-wrap mb-2">
+        <div class="text-sm font-semibold">${dateLabel(date)}
+          ${isToday?'<span class="text-[10px] font-bold ac ac-al px-2 py-0.5 rounded-full ml-1">TODAY</span>':''}</div>
+        ${day.wakeupLocked?`<div class="text-xs text-white/40">⏰ ${day.wakeupTime}${day.tomorrowTarget?` <span class="text-white/22">→ tgt ${day.tomorrowTarget}</span>`:''}</div>`:'<div class="text-xs text-white/22">⏰ Not locked</div>'}
+        <div class="text-xs text-white/35">✅ ${tasksDone}/${tasksTotal} tasks &nbsp;⭐ ${fulChecked}/7</div>
+      </div>
+      <div class="flex flex-wrap gap-1.5">${FUL.map(f=>{const on=!!(day.fulfill?.[f.id]);return`<span class="ful-chip ${on?'fc-on':'fc-off'}">${f.icon} ${f.label}</span>`;}).join('')}</div>
+    </div>
+    <div class="text-right ml-4 flex-shrink-0">
+      <div class="bb text-2xl leading-none" style="color:${score>0?color:'rgba(232,237,245,.22)'}">${score}</div>
+      <div class="text-[10px] text-white/25 mt-0.5">pts</div>
+    </div>
+    <div class="text-white/22 ml-2 text-xs flex-shrink-0 select-none">▼</div>`;
+  const body=document.createElement('div'); body.className='hst-bd';
+  const ws=day.wakeupLocked ? calcWakeScore(uid,date) : {pts:0,label:'Not locked',cls:'wvs-no',icon:'⏰'};
+  const ts=(day.todos||[]).filter(t=>t.done).reduce((s,t)=>s+PTS[t.priority],0);
+  const fs=Object.values(day.fulfill||{}).filter(Boolean).length*FPTS;
+  // Tasks list
+  let tHtml='<div class="text-xs text-white/30 uppercase tracking-wider mb-2 font-bold">Tasks</div>';
+  if(!(day.todos||[]).length) tHtml+='<div class="text-xs text-white/22 italic">No tasks recorded</div>';
+  else {
+    tHtml+='<div class="flex flex-col gap-1.5">';
+    day.todos.forEach(t=>{
+      const pc=t.priority==='low'?'pl':t.priority==='med'?'pm':'ph';
+      tHtml+=`<div class="flex items-center gap-2 text-sm"><span class="${t.done?'text-green-400':'text-white/25'} flex-shrink-0">${t.done?'✓':'○'}</span><span class="${t.done?'':'text-white/35 line-through'} truncate">${esc(t.text)}</span><span class="text-[10px] font-bold px-1.5 py-0.5 rounded-full ${pc} flex-shrink-0">${t.priority}</span></div>`;
+    });
+    tHtml+='</div>';
+  }
+  // Fulfillment grid
+  let fHtml='<div class="text-xs text-white/30 uppercase tracking-wider mb-2 mt-4 font-bold">Daily Fulfillment</div><div class="grid grid-cols-2 gap-1.5">';
+  FUL.forEach(f=>{
+    const on=!!(day.fulfill?.[f.id]);
+    fHtml+=`<div class="flex items-center gap-2 text-sm ${on?'':'text-white/28'}"><span>${on?'✅':'⬜'}</span><span>${f.icon} ${f.label}</span>${on?`<span class="text-[10px] font-bold ac ml-auto">+${FPTS}</span>`:''}</div>`;
+  });
+  fHtml+='</div>';
+  // Score breakdown
+  const wuColor=ws.pts>0?'#3ddba0':ws.pts<0?'#f75f5f':'rgba(232,237,245,.35)';
+  const prev=datePrev(date), prevDay=DB.users[uid]?.history?.[prev];
+  const tgtLine=prevDay?.tomorrowTarget
+    ? `<span class="text-white/30">Target: <b class="text-white/55">${prevDay.tomorrowTarget}</b></span>`
+    : '<span class="text-yellow-500/60 text-[11px]">⚠ No target was set</span>';
+  const sHtml=`<div class="text-xs text-white/30 uppercase tracking-wider mb-2 mt-4 font-bold">Score Breakdown</div>
+    <div class="flex flex-col gap-2 text-sm">
+      <div class="flex items-start justify-between gap-3">
+        <div class="flex flex-col gap-1">
+          <span class="text-white/38">⏰ Wake-Up</span>
+          <div class="flex flex-wrap gap-3 text-xs">${tgtLine}
+            ${day.wakeupLocked?`<span class="text-white/30">Actual: <b class="text-white/55">${day.wakeupTime}</b></span>`:''}
+          </div>
+          <div class="wvs ${ws.cls} text-[11px] px-2 py-1 mt-0.5">${ws.icon} ${ws.label}</div>
+        </div>
+        <span class="font-bold flex-shrink-0 mt-0.5" style="color:${wuColor}">${ws.pts>0?'+':''}${ws.pts}</span>
+      </div>
+      <div class="flex justify-between"><span class="text-white/38">✅ Tasks</span><span class="font-semibold text-green-400">+${ts}</span></div>
+      <div class="flex justify-between"><span class="text-white/38">⭐ Fulfillment</span><span class="font-semibold text-yellow-400">+${fs}</span></div>
+      <div class="flex justify-between border-t border-white/[.07] pt-2 mt-1"><span class="font-semibold" style="color:${color}">Total</span><span class="font-bold" style="color:${color}">${score}</span></div>
+    </div>`;
+  let tgtHtml='';
+  if(day.tomorrowTarget) tgtHtml=`<div class="text-xs text-white/30 uppercase tracking-wider mb-1 mt-4 font-bold">Tomorrow's Target (set this day)</div><div class="text-sm font-semibold" style="color:#f5c842">🎯 ${day.tomorrowTarget} JST</div>`;
+  const jHtml=day.journal?.trim()
+    ? `<div class="text-xs text-white/30 uppercase tracking-wider mb-2 mt-4 font-bold">Journal Entry</div><div class="bg-white/[.03] border border-white/[.07] rounded-lg px-4 py-3 text-sm leading-relaxed text-white/60 italic">"${esc(day.journal)}"</div>`
+    : '<div class="text-xs text-white/20 italic mt-4">No journal entry for this day.</div>';
+  body.innerHTML = tHtml+fHtml+sHtml+tgtHtml+jHtml;
+  hd.onclick=()=>toggleHst(body,hd);
+  wrapper.appendChild(hd); wrapper.appendChild(body); return wrapper;
+}
+function toggleHst(body, hd){
+  const open=body.classList.toggle('open');
+  const arr=hd.querySelector('.select-none'); if(arr) arr.textContent=open?'▲':'▼';
+}
+
+// ─── Profile (read-only) ──────────────────────────────────────────────
+function renderProfile(){
+  const uid=S.viewUid; if(!uid||!DB.users[uid]) return;
+  const u=DB.users[uid], td=jstDate();
+  const day=DB.users[uid]?.history?.[td]||{wakeupLocked:false,wakeupTime:null,tomorrowTarget:null,todos:[],fulfill:{},journal:''};
+  const [r,g,b]=hexRGB(colorA(u.color));
+  el('pv-av').textContent=initials(u.name);
+  el('pv-av').style.cssText=`background:rgba(${r},${g},${b},.16);border-color:rgba(${r},${g},${b},.38);color:${u.color};width:36px;height:36px;font-size:.9rem`;
+  el('pv-nm').textContent=u.name; el('pv-nm').style.color=u.color;
+  set('pv-wk', day.wakeupLocked?day.wakeupTime:'--:--');
+  set('pv-ws', day.wakeupLocked?'Locked (JST)':'Not locked yet today');
+  let ts=0, fs=0;
+  const ws=day.wakeupLocked ? calcWakeScore(uid,td) : {pts:0,label:'Not locked',cls:'',icon:'⏰'};
+  (day.todos||[]).forEach(t=>{ if(t.done) ts+=PTS[t.priority]; });
+  Object.values(day.fulfill||{}).forEach(v=>{ if(v) fs+=FPTS; });
+  const tot=ws.pts+ts+fs;
+  set('pv-sc',tot); el('pv-sc').style.color=u.color;
+  const wuColor=ws.pts>0?'#3ddba0':ws.pts<0?'#f75f5f':'rgba(232,237,245,.35)';
+  el('pv-sr').innerHTML=
+    `<div class="flex justify-between items-center text-sm"><span class="text-white/38">⏰ Wake-Up</span><span class="font-semibold" style="color:${wuColor}">${ws.pts>0?'+':''}${ws.pts} pts</span></div>`+
+    `<div class="text-[11px] text-white/30 mb-1">${ws.icon} ${ws.label}</div>`+
+    srow('✅ Tasks','#3ddba0',ts)+srow('⭐ Fulfillment','#f5c842',fs);
+  const fl=el('pv-fl'); fl.innerHTML=''; let checked=0;
+  FUL.forEach(f=>{
+    const on=!!(day.fulfill?.[f.id]); if(on) checked++;
+    const div=document.createElement('div'); div.className='flex items-start gap-3 '+(on?'':'opacity-40');
+    div.innerHTML=`<input type="checkbox" class="ck" ${on?'checked':''} disabled>
+      <div>
+        <div class="flex items-center gap-2 text-sm font-medium"><span class="text-base leading-none">${f.icon}</span>${f.label}${on?`<span class="text-[10px] font-bold ml-0.5" style="color:${u.color}">+${FPTS}pts</span>`:''}</div>
+        <div class="text-xs text-white/28 mt-0.5">${f.desc}</div>
+      </div>`;
+    fl.appendChild(div);
+  });
+  set('pv-fc',checked+' / '+FUL.length); set('pv-fp','+'+(checked*FPTS)+' pts');
+  const tl=el('pv-tk'); tl.innerHTML='';
+  const tasks=day.todos||[]; let tdone=0, tpts=0;
+  tasks.forEach(t=>{
+    if(t.done){ tdone++; tpts+=PTS[t.priority]; }
+    const li=document.createElement('li');
+    li.className='flex items-center gap-2.5 bg-white/[.03] border border-white/[.06] rounded-lg px-3 py-2.5';
+    const pc=t.priority==='low'?'pl':t.priority==='med'?'pm':'ph';
+    li.innerHTML=`<input type="checkbox" class="ck" ${t.done?'checked':''} disabled><span class="flex-1 text-sm ${t.done?'line-through text-white/30':''}">${esc(t.text)}</span><span class="text-[10px] font-bold px-2 py-0.5 rounded-full ${pc}">${t.priority}</span>`;
+    tl.appendChild(li);
+  });
+  set('pv-tp',tdone+' / '+tasks.length+' done'); set('pv-tpts','+'+tpts+' pts');
+  drawChart('pv-sv',null,null,'pv-tip',uid);
+}
+
+// ─── Quote of the Day ────────────────────────────────────────────────
+const QUOTES = [
+  // ── Discipline & Excellence ───────────────────────────────────────────
+  {text:"Discipline is the bridge between goals and accomplishment.", author:"Jim Rohn", role:"Entrepreneur & Author"},
+  {text:"We are what we repeatedly do. Excellence, then, is not an act, but a habit.", author:"Aristotle", role:"Philosopher, Ancient Greece"},
+  {text:"The pain of discipline is far less than the pain of regret.", author:"Sarah Bombell", role:"Author"},
+  {text:"Hard work beats talent when talent doesn't work hard.", author:"Tim Notke", role:"Basketball Coach"},
+  {text:"You don't have to be great to start, but you have to start to be great.", author:"Zig Ziglar", role:"Author & Motivational Speaker"},
+  {text:"Either you run the day, or the day runs you.", author:"Jim Rohn", role:"Entrepreneur & Author"},
+  {text:"The successful warrior is the average man, with laser-like focus.", author:"Bruce Lee", role:"Martial Artist & Philosopher"},
+  {text:"With self-discipline, almost anything is possible.", author:"Theodore Roosevelt", role:"26th President of the United States"},
+  {text:"It is not the mountain we conquer, but ourselves.", author:"Edmund Hillary", role:"Mountaineer & Explorer"},
+  {text:"Success is the sum of small efforts repeated day in and day out.", author:"Robert Collier", role:"Author & Publisher"},
+
+  // ── Philosophy & Wisdom ───────────────────────────────────────────────
+  {text:"It does not matter how slowly you go as long as you do not stop.", author:"Confucius", role:"Philosopher, Ancient China"},
+  {text:"The unexamined life is not worth living.", author:"Socrates", role:"Philosopher, Ancient Greece"},
+  {text:"Man is not disturbed by events, but by the opinions he has about events.", author:"Epictetus", role:"Stoic Philosopher"},
+  {text:"You have power over your mind, not outside events. Realize this, and you will find strength.", author:"Marcus Aurelius", role:"Emperor & Stoic Philosopher"},
+  {text:"The obstacle in the path becomes the path. Never forget, within every obstacle is an opportunity.", author:"Ryan Holiday", role:"Author & Stoic Practitioner"},
+  {text:"Waste no more time arguing about what a good man should be. Be one.", author:"Marcus Aurelius", role:"Emperor & Stoic Philosopher"},
+  {text:"No man ever steps in the same river twice, for it's not the same river and he's not the same man.", author:"Heraclitus", role:"Pre-Socratic Philosopher"},
+  {text:"He who has a why to live for can bear almost any how.", author:"Friedrich Nietzsche", role:"Philosopher & Philologist"},
+  {text:"One must still have chaos in oneself to be able to give birth to a dancing star.", author:"Friedrich Nietzsche", role:"Philosopher & Philologist"},
+  {text:"The only true wisdom is in knowing you know nothing.", author:"Socrates", role:"Philosopher, Ancient Greece"},
+  {text:"To live is the rarest thing in the world. Most people just exist.", author:"Oscar Wilde", role:"Playwright & Poet"},
+  {text:"The measure of intelligence is the ability to change.", author:"Albert Einstein", role:"Theoretical Physicist"},
+  {text:"Happiness is not something ready-made. It comes from your own actions.", author:"Dalai Lama", role:"Spiritual Leader, Tibet"},
+  {text:"Act as if what you do makes a difference. It does.", author:"William James", role:"Philosopher & Psychologist"},
+  {text:"Life is not a problem to be solved, but a reality to be experienced.", author:"Søren Kierkegaard", role:"Philosopher & Theologian"},
+
+  // ── Science & Discovery ───────────────────────────────────────────────
+  {text:"In the middle of every difficulty lies opportunity.", author:"Albert Einstein", role:"Theoretical Physicist"},
+  {text:"The important thing is not to stop questioning. Curiosity has its own reason for existing.", author:"Albert Einstein", role:"Theoretical Physicist"},
+  {text:"If you can't explain it simply, you don't understand it well enough.", author:"Albert Einstein", role:"Theoretical Physicist"},
+  {text:"Science is organized knowledge. Wisdom is organized life.", author:"Immanuel Kant", role:"Philosopher"},
+  {text:"The greatest enemy of knowledge is not ignorance, it is the illusion of knowledge.", author:"Stephen Hawking", role:"Theoretical Physicist & Cosmologist"},
+  {text:"Somewhere, something incredible is waiting to be known.", author:"Carl Sagan", role:"Astronomer & Science Communicator"},
+  {text:"The cosmos is within us. We are made of star-stuff.", author:"Carl Sagan", role:"Astronomer & Science Communicator"},
+  {text:"What we know is a drop. What we don't know is an ocean.", author:"Isaac Newton", role:"Mathematician & Physicist"},
+  {text:"The day science begins to study non-physical phenomena, it will make more progress in one decade than in all the previous centuries.", author:"Nikola Tesla", role:"Inventor & Engineer"},
+  {text:"Research is what I'm doing when I don't know what I'm doing.", author:"Wernher von Braun", role:"Aerospace Engineer"},
+  {text:"The good thing about science is that it's true whether or not you believe in it.", author:"Neil deGrasse Tyson", role:"Astrophysicist & Author"},
+
+  // ── Business & Economics ──────────────────────────────────────────────
+  {text:"An investment in knowledge pays the best interest.", author:"Benjamin Franklin", role:"Founding Father & Inventor"},
+  {text:"The only way to do great work is to love what you do.", author:"Steve Jobs", role:"Co-founder, Apple"},
+  {text:"Your most unhappy customers are your greatest source of learning.", author:"Bill Gates", role:"Co-founder, Microsoft"},
+  {text:"Chase the vision, not the money. The money will end up following you.", author:"Tony Hsieh", role:"CEO, Zappos"},
+  {text:"The best investment you can make is in yourself.", author:"Warren Buffett", role:"Investor & CEO, Berkshire Hathaway"},
+  {text:"Price is what you pay. Value is what you get.", author:"Warren Buffett", role:"Investor & CEO, Berkshire Hathaway"},
+  {text:"Risk comes from not knowing what you're doing.", author:"Warren Buffett", role:"Investor & CEO, Berkshire Hathaway"},
+  {text:"The best time to plant a tree was 20 years ago. The second best time is now.", author:"Chinese Proverb", role:"Ancient Wisdom"},
+  {text:"Opportunities don't happen. You create them.", author:"Chris Grosser", role:"Photographer & Entrepreneur"},
+  {text:"The secret of getting ahead is getting started.", author:"Mark Twain", role:"Author & Humorist"},
+  {text:"Don't be afraid to give up the good to go for the great.", author:"John D. Rockefeller", role:"Industrialist & Philanthropist"},
+  {text:"I find that the harder I work, the more luck I seem to have.", author:"Thomas Jefferson", role:"3rd President of the United States"},
+  {text:"The entrepreneur always searches for change, responds to it, and exploits it as an opportunity.", author:"Peter Drucker", role:"Management Consultant & Author"},
+  {text:"Management is doing things right; leadership is doing the right things.", author:"Peter Drucker", role:"Management Consultant & Author"},
+  {text:"Innovation is the central issue in economic prosperity.", author:"Michael Porter", role:"Economist & Professor, Harvard"},
+  {text:"Capitalism is the extraordinary belief that the nastiest of men for the nastiest of motives will somehow work for the benefit of all.", author:"John Maynard Keynes", role:"Economist"},
+
+  // ── Leadership & Character ────────────────────────────────────────────
+  {text:"Success is not final, failure is not fatal: it is the courage to continue that counts.", author:"Winston Churchill", role:"Prime Minister, UK"},
+  {text:"The future belongs to those who believe in the beauty of their dreams.", author:"Eleanor Roosevelt", role:"Diplomat & Activist"},
+  {text:"Do not wait to strike till the iron is hot, but make it hot by striking.", author:"William Butler Yeats", role:"Poet & Nobel Laureate"},
+  {text:"Leadership is not about being in charge. It is about taking care of those in your charge.", author:"Simon Sinek", role:"Author & Leadership Expert"},
+  {text:"Before you are a leader, success is all about growing yourself. When you become a leader, success is all about growing others.", author:"Jack Welch", role:"CEO, General Electric"},
+  {text:"The greatest leader is not necessarily the one who does the greatest things. He is the one that gets the people to do the greatest things.", author:"Ronald Reagan", role:"40th President of the United States"},
+  {text:"A leader is one who knows the way, goes the way, and shows the way.", author:"John C. Maxwell", role:"Author & Leadership Expert"},
+  {text:"You gain strength, courage and confidence by every experience in which you really stop to look fear in the face.", author:"Eleanor Roosevelt", role:"Diplomat & Activist"},
+  {text:"The greatest glory in living lies not in never falling, but in rising every time we fall.", author:"Nelson Mandela", role:"President of South Africa"},
+  {text:"It always seems impossible until it's done.", author:"Nelson Mandela", role:"President of South Africa"},
+
+  // ── Creativity & Art ──────────────────────────────────────────────────
+  {text:"Creativity is intelligence having fun.", author:"Albert Einstein", role:"Theoretical Physicist"},
+  {text:"Every artist was first an amateur.", author:"Ralph Waldo Emerson", role:"Essayist & Philosopher"},
+  {text:"You can't use up creativity. The more you use, the more you have.", author:"Maya Angelou", role:"Poet & Civil Rights Activist"},
+  {text:"Imagination is more important than knowledge.", author:"Albert Einstein", role:"Theoretical Physicist"},
+  {text:"The purpose of art is washing the dust of daily life off our souls.", author:"Pablo Picasso", role:"Painter & Sculptor"},
+  {text:"To be an artist is to believe in life.", author:"Henry Moore", role:"Sculptor"},
+  {text:"Art enables us to find ourselves and lose ourselves at the same time.", author:"Thomas Merton", role:"Monk & Author"},
+  {text:"An artist cannot fail; it is a success to be one.", author:"Charles Horton Cooley", role:"Sociologist"},
+  {text:"Creativity takes courage.", author:"Henri Matisse", role:"Painter & Sculptor"},
+  {text:"The role of the artist is to ask questions, not answer them.", author:"Anton Chekhov", role:"Playwright & Short Story Writer"},
+  {text:"Great art picks up where nature ends.", author:"Marc Chagall", role:"Painter & Visual Artist"},
+  {text:"To practice any art, no matter how well or badly, is a way to make your soul grow.", author:"Kurt Vonnegut", role:"Novelist & Satirist"},
+
+  // ── Literature & Writing ──────────────────────────────────────────────
+  {text:"A reader lives a thousand lives before he dies. The man who never reads lives only one.", author:"George R.R. Martin", role:"Novelist"},
+  {text:"Not all those who wander are lost.", author:"J.R.R. Tolkien", role:"Author & Philologist"},
+  {text:"We accept the love we think we deserve.", author:"Stephen Chbosky", role:"Author & Filmmaker"},
+  {text:"There is no greater agony than bearing an untold story inside you.", author:"Maya Angelou", role:"Poet & Civil Rights Activist"},
+  {text:"Books are a uniquely portable magic.", author:"Stephen King", role:"Author"},
+  {text:"The world is a book, and those who do not travel read only one page.", author:"Saint Augustine", role:"Philosopher & Theologian"},
+  {text:"One must always be careful of books, and what is inside them, for words have the power to change us.", author:"Cassandra Clare", role:"Author"},
+  {text:"Words are, in my not-so-humble opinion, our most inexhaustible source of magic.", author:"J.K. Rowling", role:"Author"},
+  {text:"Literature is the most agreeable way of ignoring life.", author:"Fernando Pessoa", role:"Poet & Writer"},
+  {text:"The duty of literature is to fight injustice and to oppose all tyranny of the mind.", author:"Emile Zola", role:"Novelist & Journalist"},
+
+  // ── Growth & Learning ─────────────────────────────────────────────────
+  {text:"What you get by achieving your goals is not as important as what you become.", author:"Henry David Thoreau", role:"Philosopher & Author"},
+  {text:"Energy and persistence conquer all things.", author:"Benjamin Franklin", role:"Founding Father & Inventor"},
+  {text:"The mind is not a vessel to be filled, but a fire to be kindled.", author:"Plutarch", role:"Historian & Philosopher"},
+  {text:"Tell me and I forget. Teach me and I remember. Involve me and I learn.", author:"Benjamin Franklin", role:"Founding Father & Inventor"},
+  {text:"Anyone who stops learning is old, whether at twenty or eighty.", author:"Henry Ford", role:"Industrialist & Founder, Ford Motor"},
+  {text:"Live as if you were to die tomorrow. Learn as if you were to live forever.", author:"Mahatma Gandhi", role:"Independence Leader, India"},
+  {text:"Education is not the filling of a pail, but the lighting of a fire.", author:"W.B. Yeats", role:"Poet & Nobel Laureate"},
+  {text:"The more that you read, the more things you will know.", author:"Dr. Seuss", role:"Author & Illustrator"},
+  {text:"Do not go where the path may lead; go instead where there is no path and leave a trail.", author:"Ralph Waldo Emerson", role:"Essayist & Philosopher"},
+  {text:"If you think education is expensive, try ignorance.", author:"Derek Bok", role:"President, Harvard University"},
+  {text:"An investment in knowledge always pays the best dividends.", author:"Benjamin Franklin", role:"Founding Father & Inventor"},
+  {text:"The capacity to learn is a gift; the ability to learn is a skill; the willingness to learn is a choice.", author:"Brian Herbert", role:"Author"},
+
+  // ── Resilience & Courage ──────────────────────────────────────────────
+  {text:"Fall seven times, stand up eight.", author:"Japanese Proverb", role:"Ancient Wisdom"},
+  {text:"The only way out is through.", author:"Robert Frost", role:"Poet & Nobel Laureate"},
+  {text:"Turn your wounds into wisdom.", author:"Oprah Winfrey", role:"Media Executive & Philanthropist"},
+  {text:"Courage is not the absence of fear, but the triumph over it.", author:"Nelson Mandela", role:"President of South Africa"},
+  {text:"Do one thing every day that scares you.", author:"Eleanor Roosevelt", role:"Diplomat & Activist"},
+  {text:"Tough times never last, but tough people do.", author:"Robert H. Schuller", role:"Pastor & Author"},
+  {text:"Out of suffering have emerged the strongest souls; the most massive characters are seared with scars.", author:"Kahlil Gibran", role:"Poet & Philosopher"},
+  {text:"You have to fight through some bad days to earn the best days of your life.", author:"Unknown", role:"Timeless Wisdom"},
+  {text:"The comeback is always stronger than the setback.", author:"Unknown", role:"Timeless Wisdom"},
+  {text:"Character cannot be developed in ease and quiet. Only through experience of trial and suffering can the soul be strengthened.", author:"Helen Keller", role:"Author & Activist"},
+
+  // ── Focus & Execution ─────────────────────────────────────────────────
+  {text:"Do what you can, with what you have, where you are.", author:"Theodore Roosevelt", role:"26th President of the United States"},
+  {text:"Action is the foundational key to all success.", author:"Pablo Picasso", role:"Painter & Sculptor"},
+  {text:"The secret of change is to focus all of your energy not on fighting the old, but on building the new.", author:"Socrates", role:"Philosopher, Ancient Greece"},
+  {text:"You miss 100% of the shots you don't take.", author:"Wayne Gretzky", role:"Ice Hockey Player"},
+  {text:"The way to get started is to quit talking and begin doing.", author:"Walt Disney", role:"Entrepreneur & Animator"},
+  {text:"Perfection is not attainable, but if we chase perfection we can catch excellence.", author:"Vince Lombardi", role:"Football Coach"},
+  {text:"If you spend too much time thinking about a thing, you'll never get it done.", author:"Bruce Lee", role:"Martial Artist & Philosopher"},
+  {text:"Ideas are commodity. Execution of ideas is not.", author:"Michael Dell", role:"Founder & CEO, Dell Technologies"},
+  {text:"Vision without execution is just hallucination.", author:"Henry Ford", role:"Industrialist & Founder, Ford Motor"},
+  {text:"The difference between ordinary and extraordinary is that little extra.", author:"Jimmy Johnson", role:"Football Coach"},
+
+  // ── Time & Priorities ─────────────────────────────────────────────────
+  {text:"Time is the most valuable thing a man can spend.", author:"Theophrastus", role:"Philosopher, Ancient Greece"},
+  {text:"You may delay, but time will not.", author:"Benjamin Franklin", role:"Founding Father & Inventor"},
+  {text:"The key is not to prioritize what's on your schedule, but to schedule your priorities.", author:"Stephen Covey", role:"Author & Educator"},
+  {text:"Don't count the days, make the days count.", author:"Muhammad Ali", role:"Professional Boxer & Activist"},
+  {text:"Lost time is never found again.", author:"Benjamin Franklin", role:"Founding Father & Inventor"},
+  {text:"Someday is not a day of the week.", author:"Janet Dailey", role:"Novelist"},
+  {text:"The two most powerful warriors are patience and time.", author:"Leo Tolstoy", role:"Novelist & Philosopher"},
+  {text:"Yesterday is gone. Tomorrow has not yet come. We have only today. Let us begin.", author:"Mother Teresa", role:"Missionary & Nobel Peace Laureate"},
+  {text:"How we spend our days is how we spend our lives.", author:"Annie Dillard", role:"Author & Poet"},
+  {text:"The bad news is time flies. The good news is you're the pilot.", author:"Michael Altshuler", role:"Motivational Speaker"},
+
+  // ── Innovation & Technology ───────────────────────────────────────────
+  {text:"Innovation distinguishes between a leader and a follower.", author:"Steve Jobs", role:"Co-founder, Apple"},
+  {text:"The advance of technology is based on making it fit in so that you don't really even notice it.", author:"Bill Gates", role:"Co-founder, Microsoft"},
+  {text:"Any sufficiently advanced technology is indistinguishable from magic.", author:"Arthur C. Clarke", role:"Science Fiction Author"},
+  {text:"Technology is nothing. What's important is that you have a faith in people, that they're basically good and smart.", author:"Steve Jobs", role:"Co-founder, Apple"},
+  {text:"The internet is becoming the town square for the global village of tomorrow.", author:"Bill Gates", role:"Co-founder, Microsoft"},
+  {text:"First, solve the problem. Then, write the code.", author:"John Johnson", role:"Computer Scientist"},
+  {text:"Programs must be written for people to read, and only incidentally for machines to execute.", author:"Harold Abelson", role:"Computer Scientist, MIT"},
+  {text:"The best way to predict the future is to invent it.", author:"Alan Kay", role:"Computer Scientist"},
+  {text:"Move fast and break things. Unless you are breaking stuff, you are not moving fast enough.", author:"Mark Zuckerberg", role:"Co-founder, Facebook"},
+  {text:"The real problem is not whether machines think but whether men do.", author:"B.F. Skinner", role:"Psychologist & Behaviorist"},
+
+  // ── Health & Wellbeing ────────────────────────────────────────────────
+  {text:"To keep the body in good health is a duty, otherwise we shall not be able to keep our mind strong and clear.", author:"Buddha", role:"Spiritual Teacher"},
+  {text:"Take care of your body. It's the only place you have to live.", author:"Jim Rohn", role:"Entrepreneur & Author"},
+  {text:"Physical fitness is not only one of the most important keys to a healthy body, it is the basis of dynamic and creative intellectual activity.", author:"John F. Kennedy", role:"35th President of the United States"},
+  {text:"The groundwork for all happiness is good health.", author:"Leigh Hunt", role:"Poet & Critic"},
+  {text:"A healthy outside starts from the inside.", author:"Robert Urich", role:"Actor"},
+  {text:"Sleep is the best meditation.", author:"Dalai Lama", role:"Spiritual Leader, Tibet"},
+
+  // ── Mindset & Psychology ──────────────────────────────────────────────
+  {text:"Whether you think you can or you think you can't, you're right.", author:"Henry Ford", role:"Industrialist & Founder, Ford Motor"},
+  {text:"The mind is everything. What you think you become.", author:"Buddha", role:"Spiritual Teacher"},
+  {text:"Change your thoughts and you change your world.", author:"Norman Vincent Peale", role:"Pastor & Author"},
+  {text:"It is not what happens to you, but how you react to it that matters.", author:"Epictetus", role:"Stoic Philosopher"},
+  {text:"The happiness of your life depends upon the quality of your thoughts.", author:"Marcus Aurelius", role:"Emperor & Stoic Philosopher"},
+  {text:"You are the average of the five people you spend the most time with.", author:"Jim Rohn", role:"Entrepreneur & Author"},
+  {text:"What lies behind us and what lies before us are tiny matters compared to what lies within us.", author:"Ralph Waldo Emerson", role:"Essayist & Philosopher"},
+  {text:"Our greatest fear should not be of failure but of succeeding at things in life that don't really matter.", author:"Francis Chan", role:"Author & Pastor"},
+  {text:"To enjoy the glow of good health, you must exercise.", author:"Gene Tunney", role:"Professional Boxer"},
+  {text:"A man is but the product of his thoughts. What he thinks, he becomes.", author:"Mahatma Gandhi", role:"Independence Leader, India"},
+
+  // ── Contribution & Society ────────────────────────────────────────────
+  {text:"The best way to find yourself is to lose yourself in the service of others.", author:"Mahatma Gandhi", role:"Independence Leader, India"},
+  {text:"No act of kindness, no matter how small, is ever wasted.", author:"Aesop", role:"Storyteller, Ancient Greece"},
+  {text:"We make a living by what we get, but we make a life by what we give.", author:"Winston Churchill", role:"Prime Minister, UK"},
+  {text:"I alone cannot change the world, but I can cast a stone across the water to create many ripples.", author:"Mother Teresa", role:"Missionary & Nobel Peace Laureate"},
+  {text:"The purpose of life is not to be happy. It is to be useful, to be honorable, to be compassionate.", author:"Ralph Waldo Emerson", role:"Essayist & Philosopher"},
+  {text:"Real generosity toward the future lies in giving all to the present.", author:"Albert Camus", role:"Novelist & Philosopher"},
+  {text:"You cannot get through a single day without having an impact on the world around you.", author:"Jane Goodall", role:"Primatologist & Anthropologist"},
+  {text:"If you want to lift yourself up, lift up someone else.", author:"Booker T. Washington", role:"Educator & Civil Rights Leader"},
+
+  // ── Japanese Wisdom ───────────────────────────────────────────────────
+  {text:"A journey of a thousand miles begins with a single step.", author:"Laozi", role:"Philosopher & Founder of Taoism"},
+  {text:"Even monkeys fall from trees.", author:"Japanese Proverb", role:"Ancient Wisdom"},
+  {text:"Knowledge without wisdom is a load of books on the back of an ass.", author:"Japanese Proverb", role:"Ancient Wisdom"},
+  {text:"Vision without action is a daydream. Action without vision is a nightmare.", author:"Japanese Proverb", role:"Ancient Wisdom"},
+  {text:"Seven times down, eight times up.", author:"Japanese Proverb", role:"Ancient Wisdom"},
+  {text:"One who smiles rather than rages is always the stronger.", author:"Japanese Proverb", role:"Ancient Wisdom"},
+  {text:"The reputation of a thousand years may be determined by the conduct of one hour.", author:"Japanese Proverb", role:"Ancient Wisdom"},
+  {text:"When you're dying of thirst, it's too late to think about digging a well.", author:"Japanese Proverb", role:"Ancient Wisdom"},
+];
+function quoteIndex(){
+  // Seed: floor(JST timestamp / 86400000) where JST day resets at 5:00 JST
+  // JST offset = +9h. Day resets at 5:00 JST = 20:00 UTC prev day.
+  const now = new Date();
+  const jstMs = now.getTime() + now.getTimezoneOffset()*60000 + 9*3600000;
+  // Subtract 5 hours so the "day" flips at 05:00 JST
+  const seed = Math.floor((jstMs - 5*3600000) / 86400000);
+  return seed % QUOTES.length;
+}
+function renderQuote(){
+  const qb=el('quote-bar'); if(!qb) return;
+  const q=QUOTES[quoteIndex()];
+  set('q-text','\u201C'+q.text+'\u201D');
+  set('q-author',q.author);
+  set('q-role',q.role);
+}
+
+// ─── Boot ─────────────────────────────────────────────────────────────
+async function boot(){
+  initSuColors();
+  showAuthLoading(true);
+  try {
+    // Supabase から全ユーザーデータを取得
+    const { data, error } = await _sb.from('users').select('uid,name,pw,color,lastactive,history,nid');
+    if(error){
+      showAuthLoading(false, 'Supabase error: '+error.message);
+      return;
+    }
+    if(data && data.length){
+      data.forEach(row => {
+        // DataCloneError 対策: JSON往復で完全な plain object に変換
+        let hist = {};
+        try {
+          const raw = row.history;
+          // Supabase の JSONB は既にオブジェクトだが、Proxy の可能性があるため必ず変換
+          hist = JSON.parse(JSON.stringify(raw || {}));
+        } catch(_){ hist = {}; }
+
+        DB.users[String(row.uid)] = {
+          name:       String(row.name  || ''),
+          pw:         String(row.pw    || ''),
+          color:      String(row.color || colorStr(GRADIENTS[0])),
+          lastActive: Number(row.lastactive || 0),
+          history:    hist,
+          nid:        Number(row.nid   || 10)
+        };
+      });
+    }
+    rebuildSel();
+    showAuthLoading(false);
+  } catch(e) {
+    showAuthLoading(false, 'Connection failed: '+e.message);
+  }
+}
+
+boot();
+
+// ─── Responsive chart redraw via ResizeObserver ───────────────────────
+// When the container width changes (orientation, sidebar, etc.) redraw
+// the chart currently visible so coordinates stay correct.
+(function(){
+  if(typeof ResizeObserver === 'undefined') return;
+  const chartIds = [
+    {svg:'ch-sv',   leg:'ch-lg',   tip:'ch-tip',   uid:null},
+    {svg:'rk-ch-sv',leg:'rk-ch-lg',tip:'rk-ch-tip',uid:null},
+    {svg:'pv-sv',   leg:null,      tip:'pv-tip',   uid:'_pv'},
+  ];
+  chartIds.forEach(({svg:svgId})=>{
+    const svgEl = document.getElementById(svgId);
+    if(!svgEl) return;
+    const ro = new ResizeObserver(()=>{
+      // Only redraw if parent view is active
+      const view = svgEl.closest('.view');
+      if(!view || !view.classList.contains('on')) return;
+      if(svgId==='ch-sv')    drawChart('ch-sv','ch-lg',null,'ch-tip',null);
+      if(svgId==='rk-ch-sv') drawChart('rk-ch-sv','rk-ch-lg',null,'rk-ch-tip',null);
+      if(svgId==='pv-sv' && S.viewUid) drawChart('pv-sv',null,null,'pv-tip',S.viewUid);
+    });
+    ro.observe(svgEl.parentElement || svgEl);
+  });
+})();
+</script>
+</body>
+</html>
