@@ -174,10 +174,43 @@ select.inp option{background:#0d1e3a;color:#e8edf5}
 /* Chart container */
 .chart-wrap{position:relative;width:100%;-webkit-user-select:none;user-select:none}
 .chart-wrap svg{display:block;width:100%;overflow:visible;touch-action:none}
-.ctip{position:absolute;background:#0c1a30;border:1px solid rgba(255,255,255,.16);
-  border-radius:9px;padding:7px 13px;font-size:.74rem;pointer-events:none;
-  opacity:0;transition:opacity .18s;white-space:nowrap;z-index:20;
-  backdrop-filter:blur(10px);font-weight:600}
+/* ── Weekly chart tooltip ────────────────────────────────────────── */
+.ctip{
+  position:absolute;
+  background:rgba(6,14,34,.97);
+  border:1px solid rgba(255,255,255,.13);
+  border-radius:10px;
+  /* compact: keeps tipH small so it always fits above the dot */
+  padding:5px 13px;
+  font-size:.75rem;pointer-events:none;
+  opacity:0;transition:opacity .2s;
+  white-space:nowrap;z-index:20;
+  backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+  font-weight:700;letter-spacing:.015em;
+  transform:none;
+  /* box-shadow + border injected dynamically with dot colour */
+}
+.ctip.on{opacity:1}
+/* Caret — JS sets .style.left so it always aims at the dot */
+.ctip-caret{
+  position:absolute;bottom:-7px;
+  width:0;height:0;
+  border-left:7px solid transparent;
+  border-right:7px solid transparent;
+  border-top:7px solid rgba(6,14,34,.97);
+  transform:translateX(-50%);
+  pointer-events:none;
+}
+.ctip-caret-border{
+  position:absolute;bottom:-9px;
+  width:0;height:0;
+  border-left:9px solid transparent;
+  border-right:9px solid transparent;
+  border-top:9px solid rgba(255,255,255,.13);
+  transform:translateX(-50%);
+  pointer-events:none;
+  z-index:-1;
+}
 
 /* Last Active */
 .la{font-size:.64rem;font-weight:500;color:rgba(156,163,175,.75);letter-spacing:.01em;
@@ -249,6 +282,41 @@ select.inp option{background:#0d1e3a;color:#e8edf5}
 .cum-tip.on{opacity:1}
 /* Grand total badge at top of last bar */
 .cum-total{font-family:'Bebas Neue',sans-serif;letter-spacing:.05em}
+
+/* ── Wake-up clock: iPhone clamp fix ──────────────────────────────── */
+input#wk-in{font-size:clamp(1.1rem,6vw,2rem);padding:10px 12px;letter-spacing:.06em;font-family:'Bebas Neue',sans-serif}
+#wk-t{font-size:clamp(2rem,12vw,3.8rem)!important;word-break:break-all}
+
+/* ── Edit History Modal ───────────────────────────────────────────── */
+#edit-modal{position:fixed;inset:0;z-index:600;display:none;align-items:flex-end;justify-content:center}
+#edit-modal.open{display:flex}
+#edit-modal-bg{position:absolute;inset:0;background:rgba(5,13,26,.82);backdrop-filter:blur(8px)}
+#edit-modal-box{position:relative;z-index:1;width:100%;max-width:520px;max-height:92dvh;
+  overflow-y:auto;border-radius:20px 20px 0 0;
+  background:rgba(8,20,45,.98);border:1px solid rgba(255,255,255,.12);
+  border-bottom:none;padding:0 0 env(safe-area-inset-bottom,0);
+  animation:slideUp .3s cubic-bezier(.22,1,.36,1)}
+@media(min-width:520px){
+  #edit-modal-box{max-height:88dvh;border-radius:20px;border-bottom:1px solid rgba(255,255,255,.12);margin-bottom:24px}
+}
+@keyframes slideUp{from{transform:translateY(60px);opacity:0}to{transform:none;opacity:1}}
+.em-hd{position:sticky;top:0;background:rgba(8,20,45,.98);border-bottom:1px solid rgba(255,255,255,.08);
+  padding:16px 20px 12px;display:flex;align-items:center;justify-content:space-between;z-index:2}
+.em-body{padding:16px 20px 24px}
+.em-sec{font-size:.62rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+  color:rgba(232,237,245,.36);margin:18px 0 8px;display:flex;align-items:center;gap:6px}
+.em-sec:first-child{margin-top:0}
+.edit-ck{width:22px;height:22px;border:2px solid rgba(255,255,255,.22);border-radius:6px;
+  cursor:pointer;appearance:none;position:relative;transition:all .15s;flex-shrink:0;margin-top:1px}
+.edit-ck:checked{background:var(--a);border-color:var(--a)}
+.edit-ck:checked::after{content:'✓';position:absolute;top:50%;left:50%;
+  transform:translate(-50%,-50%);font-size:12px;color:#fff;font-weight:900}
+.hst-edit-btn{font-size:.68rem;padding:4px 10px;min-height:28px;border-radius:6px;
+  background:rgba(var(--ar),var(--ag),var(--ab),.12);
+  border:1px solid rgba(var(--ar),var(--ag),var(--ab),.28);
+  color:var(--a);font-weight:700;cursor:pointer;white-space:nowrap;letter-spacing:.02em;
+  transition:background .15s}
+.hst-edit-btn:hover{background:rgba(var(--ar),var(--ag),var(--ab),.22)}
 
 @keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 @keyframes taskIn{from{opacity:0;transform:translateX(-5px)}to{opacity:1;transform:none}}
@@ -723,6 +791,60 @@ select.inp option{background:#0d1e3a;color:#e8edf5}
 </nav>
 
 <div id="toast"></div>
+
+
+<!-- ████ EDIT HISTORY MODAL ████ -->
+<div id="edit-modal" role="dialog" aria-modal="true" aria-labelledby="em-title">
+  <div id="edit-modal-bg" onclick="closeEditModal()"></div>
+  <div id="edit-modal-box">
+    <div class="em-hd">
+      <div>
+        <div id="em-title" class="bb text-xl ac-tg tracking-wider leading-none">Edit Day</div>
+        <div id="em-date" class="text-xs text-white/35 mt-0.5 tracking-wide"></div>
+      </div>
+      <button onclick="closeEditModal()" class="btn btn-sm px-3 py-1.5 text-white/50 hover:text-white">✕</button>
+    </div>
+    <div class="em-body">
+      <!-- Wake-up -->
+      <div class="em-sec"><span class="dot5 ac-dot"></span>Wake-Up Time</div>
+      <div class="flex items-center gap-3 mb-1">
+        <div class="flex items-center gap-2">
+          <input type="checkbox" id="em-wk-lock" class="edit-ck">
+          <label for="em-wk-lock" class="text-sm text-white/60 cursor-pointer">Locked</label>
+        </div>
+        <input type="time" id="em-wk-time" class="inp flex-1" style="font-size:clamp(.9rem,4vw,1.1rem)">
+      </div>
+      <div class="text-xs text-white/25 mb-1">Tomorrow Target (set for next day)</div>
+      <input type="time" id="em-tgt" class="inp" style="font-size:.9rem;margin-bottom:4px">
+
+      <!-- Fulfillment -->
+      <div class="em-sec"><span class="dot5" style="background:#3ddba0;box-shadow:0 0 5px #3ddba0"></span>Daily Fulfillment</div>
+      <div id="em-ful" class="grid grid-cols-1 gap-2.5"></div>
+
+      <!-- Tasks -->
+      <div class="em-sec"><span class="dot5" style="background:#f5c842;box-shadow:0 0 5px #f5c842"></span>Tasks</div>
+      <div id="em-tasks" class="flex flex-col gap-2 mb-2"></div>
+      <div class="flex gap-2 mt-1">
+        <input type="text" id="em-tk-in" class="inp flex-1 text-sm py-2" placeholder="Add task…"
+          onkeydown="if(event.key==='Enter')emAddTask()">
+        <select id="em-tk-pr" class="inp w-[64px] text-xs px-2 py-2">
+          <option value="low">Low</option><option value="med" selected>Med</option><option value="high">High</option>
+        </select>
+        <button onclick="emAddTask()" class="btn btn-ac px-3 py-2 text-lg leading-none">+</button>
+      </div>
+
+      <!-- Journal -->
+      <div class="em-sec"><span class="dot5" style="background:#e75fc3;box-shadow:0 0 5px #e75fc3"></span>Journal</div>
+      <textarea id="em-jnl" class="jnl-area" placeholder="How did this day go?…" style="min-height:80px"></textarea>
+
+      <!-- Save -->
+      <div class="flex gap-2 mt-5">
+        <button onclick="closeEditModal()" class="btn flex-1 py-3 text-sm">Cancel</button>
+        <button onclick="saveEditModal()" class="btn btn-ac flex-1 py-3 text-sm font-bold">💾 Save Changes</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 <script>
 // ════════════════════════════════════════════════════════════════════
@@ -1353,9 +1475,142 @@ function drawFulfillChart(uid, animate=true){
   });
 }
 
+
+// ─── Edit History Modal ───────────────────────────────────────────────
+// State for the modal currently open
+const EM = { uid:null, date:null, tasks:[] };
+
+function openEditModal(uid, date){
+  EM.uid=uid; EM.date=date;
+  const day=DB.users[uid]?.history?.[date]||getDay(uid,date);
+  // Clone tasks so we can edit without mutating until save
+  EM.tasks=JSON.parse(JSON.stringify(day.todos||[]));
+
+  el('em-title').textContent='Edit Day';
+  el('em-date').textContent=dateLabel(date)+' (JST)';
+
+  // Wake-up
+  const lockCk=el('em-wk-lock');
+  lockCk.checked=!!(day.wakeupLocked);
+  el('em-wk-time').value=day.wakeupTime||'07:00';
+  el('em-tgt').value=day.tomorrowTarget||'';
+
+  // Fulfillment checkboxes
+  const fulDiv=el('em-ful'); fulDiv.innerHTML='';
+  FUL.forEach(f=>{
+    const on=!!(day.fulfill?.[f.id]);
+    const row=document.createElement('label');
+    row.className='flex items-start gap-3 cursor-pointer py-1';
+    row.innerHTML=`<input type="checkbox" class="edit-ck mt-0.5" id="em-f-${f.id}" ${on?'checked':''}>
+      <div class="flex-1">
+        <div class="flex items-center gap-2 text-sm font-medium"><span>${f.icon}</span>${f.label}</div>
+        <div class="text-xs text-white/30">${f.desc}</div>
+      </div>`;
+    fulDiv.appendChild(row);
+  });
+
+  // Tasks
+  emRenderTasks();
+
+  // Journal
+  el('em-jnl').value=day.journal||'';
+
+  // Show
+  const modal=el('edit-modal');
+  modal.classList.add('open');
+  document.body.style.overflow='hidden';
+}
+
+function closeEditModal(){
+  el('edit-modal').classList.remove('open');
+  document.body.style.overflow='';
+}
+
+function emRenderTasks(){
+  const div=el('em-tasks'); div.innerHTML='';
+  EM.tasks.forEach((t,i)=>{
+    const pc=t.priority==='low'?'pl':t.priority==='med'?'pm':'ph';
+    const row=document.createElement('div');
+    row.className='flex items-center gap-2 bg-white/[.03] border border-white/[.07] rounded-lg px-3 py-2.5';
+    row.innerHTML=`
+      <input type="checkbox" class="edit-ck" ${t.done?'checked':''} onchange="EM.tasks[${i}].done=this.checked">
+      <span class="flex-1 text-sm ${t.done?'line-through text-white/35':''}">${esc(t.text)}</span>
+      <span class="text-[10px] font-bold px-1.5 py-0.5 rounded-full ${pc}">${t.priority}</span>
+      <button onclick="EM.tasks.splice(${i},1);emRenderTasks()"
+        class="text-white/25 hover:text-red-400 text-sm px-1">✕</button>`;
+    div.appendChild(row);
+  });
+}
+
+function emAddTask(){
+  const inp=el('em-tk-in'), pr=el('em-tk-pr');
+  const text=inp.value.trim(); if(!text) return;
+  EM.tasks.push({id:Date.now().toString(36),text,priority:pr.value,done:false});
+  inp.value='';
+  emRenderTasks();
+}
+
+function saveEditModal(){
+  const {uid,date}=EM;
+  if(!uid||!date) return;
+  const day=getDay(uid,date);
+
+  // Wake-up
+  const locked=el('em-wk-lock').checked;
+  const wkTime=el('em-wk-time').value;
+  day.wakeupLocked=locked;
+  day.wakeupTime=locked&&wkTime?wkTime:null;
+
+  // Tomorrow target
+  const tgt=el('em-tgt').value;
+  day.tomorrowTarget=tgt||null;
+
+  // Fulfillment
+  if(!day.fulfill) day.fulfill=EMPTY_FULFILL();
+  FUL.forEach(f=>{
+    const ck=el('em-f-'+f.id);
+    if(ck) day.fulfill[f.id]=ck.checked;
+  });
+
+  // Tasks
+  day.todos=JSON.parse(JSON.stringify(EM.tasks));
+
+  // Journal
+  day.journal=el('em-jnl').value;
+
+  // Sync + refresh
+  syncUser(uid);
+
+  // Refresh all relevant displays
+  if(S.uid===uid){
+    const td=jstDate();
+    if(date===td){
+      const todayDay=getDay(uid,td);
+      renderFulfill(uid,td,todayDay);
+      renderJournal(uid,td,todayDay);
+      renderScore(uid,td);
+      renderWK(uid,td,todayDay);
+    }
+    renderRanking();
+    if(S.activeView==='vrv') drawFulfillChart(uid, true);
+    if(S.activeView==='vh') renderHistory();
+    // Redraw home chart if on home
+    if(S.activeView==='vd') drawChart('ch-sv','ch-lg',null,'ch-tip',null);
+  }
+
+  closeEditModal();
+  toast('✓ Day updated & synced');
+}
+
 function renderRankingView(){
   renderRanking();
-  drawChart('rk-ch-sv','rk-ch-lg',null,'rk-ch-tip',null);
+  // Double rAF: ensures the view is fully painted and its container width
+  // is measurable before drawChart reads getBoundingClientRect().
+  // Without this, the SVG is drawn inside a display:none→block transition
+  // and getBoundingClientRect() may return 0, producing wrong coordinates.
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{
+    drawChart('rk-ch-sv','rk-ch-lg',null,'rk-ch-tip',null);
+  }));
 }
 function checkAlertBanner(){
   const ab=el('alert-tmr'); if(!ab) return;
@@ -1574,8 +1829,12 @@ function relativeTime(ts){
 function renderRanking(){
   const td=jstDate();
   const sc=Object.keys(DB.users)
-    .map(uid=>({uid, name:DB.users[uid].name, color:DB.users[uid].color,
-      score:calcScore(uid,td), streak:calcStreak(uid).streak}))
+    .map(uid=>{
+      const todayDay=DB.users[uid]?.history?.[td];
+      const wakeTime =todayDay?.wakeupLocked&&todayDay?.wakeupTime ? todayDay.wakeupTime : null;
+      return {uid, name:DB.users[uid].name, color:DB.users[uid].color,
+        score:calcScore(uid,td), streak:calcStreak(uid).streak, wakeTime};
+    })
     .sort((a,b)=>b.score-a.score);
   const mx=Math.max(...sc.map(x=>x.score),1);
   const medals=['🥇','🥈','🥉'], rc=['r1','r2','r3'];
@@ -1588,21 +1847,29 @@ function renderRanking(){
     const laHtml=la
       ? `<span class="la ${la.cls}"><span class="${la.dot}"></span>${la.label}</span>`
       : `<span class="la"><span class="la-dot-off"></span>No activity</span>`;
+    // Wake-up badge: show only if locked, else omit entirely
+    const wakeHtml=s.wakeTime
+      ? `<span class="inline-flex items-center gap-1 text-[11px] font-semibold flex-shrink-0"
+           style="color:rgba(232,237,245,.55)">⏰ ${s.wakeTime}</span>`
+      : '';
     const d=document.createElement('div');
     d.className='flex items-center gap-3 bg-white/[.03] border border-white/[.07] rounded-xl px-4 py-3 transition-all '+(isMe?'ac-al2':'hover:bg-white/[.055] cursor-pointer');
     if(!isMe) d.onclick=()=>viewProfile(s.uid);
     d.innerHTML=`
       <div class="av w-9 h-9 bb text-sm" style="background:rgba(${r},${g},${b},.16);border-color:rgba(${r},${g},${b},.38);color:${s.color}">${initials(s.name)}</div>
       <div class="bb text-xl w-8 text-center flex-shrink-0 leading-none ${i<3?rc[i]:'text-white/28'}">${medal}</div>
-      <div class="flex-1 min-w-0">
-        <div class="flex justify-between items-center gap-2">
-          <div class="flex flex-col min-w-0">
+      <div class="flex-1 min-w-0 overflow-hidden">
+        <div class="flex justify-between items-start gap-2">
+          <div class="flex flex-col min-w-0 flex-1">
             <div class="flex items-center gap-2 flex-wrap">
               <span class="text-sm font-semibold truncate">${esc(s.name)}</span>
               ${isMe?'<span class="text-[10px] font-bold ac ac-al px-2 py-0.5 rounded-full flex-shrink-0">YOU</span>':''}
               ${!isMe&&!S.spectate?'<span class="text-[10px] text-white/22 flex-shrink-0">→ view</span>':''}
             </div>
-            ${laHtml}
+            <div class="flex items-center gap-2.5 flex-wrap mt-0.5">
+              ${laHtml}
+              ${wakeHtml}
+            </div>
           </div>
           <div class="bb text-2xl leading-none flex-shrink-0" style="color:${s.color}">${s.score}</div>
         </div>
@@ -1620,148 +1887,272 @@ function renderChart(){ drawChart('ch-sv','ch-lg',null,'ch-tip',null) }
 function drawChart(svgId, legId, dtId, tipId, focusUid){
   const svg=el(svgId); if(!svg) return;
   const leg=el(legId), dtl=dtId?el(dtId):null;
+  const tip=el(tipId);
 
-  // ── Measure actual rendered container width ────────────────────────
-  // getBoundingClientRect is more reliable than clientWidth for SVGs
-  const wrap = svg.parentElement;
+  // ── Container measurement ─────────────────────────────────────────
+  const wrap       = svg.parentElement;
   const containerW = (wrap ? wrap.getBoundingClientRect().width : 0) || 340;
-  const isMobile = containerW < 520;
+  const isMobile   = containerW < 520;
 
-  // ── Virtual coordinate space ───────────────────────────────────────
-  // W=600 is the internal "canvas" width in SVG units.
-  // The viewBox + preserveAspectRatio handles scaling to any real width.
-  // Keeping W modest means font-size values in SVG units translate to
-  // visually large text on small screens (SVG units / px ratio is large).
-  const W       = 600;
+  // ── SVG virtual canvas ────────────────────────────────────────────
+  // W=560 fixed canvas; viewBox scales to any real screen width.
+  // Tooltip px positions are converted from SVG units via live scale ratio.
+  const W       = 560;
+  // Taller chart + generous PT so tooltip always clears the topmost dot:
+  // Compact tip ~28px tall, GAP 8px, dotR_px ~8px → need ~44px above dot.
+  // At mobile scale ≈ 0.67, PT needs to be ≥ 44/0.67 ≈ 66 SVG units → use 70.
+  const H       = isMobile ? 264 : 218;
+  const LABEL_H = isMobile ?  34 :  28;
+  const chartH  = H - LABEL_H;
 
-  // iPhone-first heights — taller chart = more visual breathing room
-  const H       = isMobile ? 220 : 200;   // total viewBox height
-  const LABEL_H = isMobile ?  32 :  26;   // bottom strip for day labels
-  const chartH  = H - LABEL_H;             // usable data area
+  // ── SYMMETRIC padding — equal left & right ────────────────────────
+  // This guarantees xOf(3) = W/2 (middle dot at exact horizontal centre).
+  // Y-axis labels sit inside the left PAD area (x = PAD-6, text-anchor:end).
+  const PAD     = isMobile ?  38 :  30;     // EQUAL left & right margin
+  const PT      = isMobile ?  70 :  44;     // top clearance (tooltip height + gap + dot)
+  const PB      = isMobile ?  12 :  10;
 
-  // Padding: enough for axis labels on left, dots not clipped on edges
-  const PD_L    = isMobile ?  38 :  36;   // left padding (y-axis labels)
-  const PD_R    = isMobile ?  14 :  12;   // right padding
-  const PT      = isMobile ?  18 :  16;   // top padding
-  const PB      = isMobile ?  12 :  10;   // bottom of chart (above labels)
+  const DAY_FS  = isMobile ?  17 :  12;
+  const AX_FS   = isMobile ?  13 :  10;
 
-  // Typography — ×2 bigger than before on mobile
-  const DAY_FS  = isMobile ?  18 :  12;   // day label font-size (SVG units)
-  const AX_FS   = isMobile ?  14 :  10;   // y-axis value font-size
+  // Dot & line
+  const DOT_R   = isMobile ?   9 :   5;
+  const DOT_R_L = isMobile ?  12 :   7;
+  const LINE_W  = isMobile ? '3.5' : '2.5';
 
-  // Dot sizes — finger-friendly
-  const DOT_R   = isMobile ? 8   :  5;    // regular dot radius
-  const DOT_R_L = isMobile ? 11  :  7;    // today (last) dot radius
-  const LINE_W  = isMobile ? '3' : '2.5'; // stroke-width
-
-  // ── Apply viewBox & aspect ratio ─────────────────────────────────
+  // ── Set viewBox, respond to any container width ───────────────────
   svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
-  svg.setAttribute('preserveAspectRatio', 'xMidYMid meet');
-  svg.style.width       = '100%';
-  svg.style.height      = '';
-  svg.style.aspectRatio = `${W} / ${H}`;
-  svg.style.display     = 'block';
-  svg.style.overflow    = 'visible';
+  svg.setAttribute('preserveAspectRatio','xMidYMid meet');
+  svg.style.width='100%'; svg.style.height='';
+  svg.style.aspectRatio=`${W} / ${H}`;
+  svg.style.display='block'; svg.style.overflow='visible';
 
   // ── Data ──────────────────────────────────────────────────────────
-  const days    = Array.from({length:7},(_,i)=>jstOff(i-6));
-  const labels  = days.map(d=>new Date(d+'T12:00:00').toLocaleDateString('en-US',{weekday:'short'}));
-  const targets = focusUid ? [focusUid] : Object.keys(DB.users).slice(0,6);
-  const scMap   = {}; targets.forEach(u=>{scMap[u]=days.map(d=>calcScore(u,d));});
-  const allMx   = Math.max(...Object.values(scMap).flat(), 1);
+  const days   = Array.from({length:7},(_,i)=>jstOff(i-6));
+  const labels = days.map(d=>new Date(d+'T12:00:00').toLocaleDateString('en-US',{weekday:'short'}));
+  const targets= focusUid?[focusUid]:Object.keys(DB.users).slice(0,6);
+  const scMap  = {}; targets.forEach(u=>{scMap[u]=days.map(d=>calcScore(u,d));});
+  const allMx  = Math.max(...Object.values(scMap).flat(), 1);
 
   svg.innerHTML=''; if(leg) leg.innerHTML=''; if(dtl) dtl.innerHTML='';
-  const defs = svgEl('defs'); svg.appendChild(defs);
+  const defs=svgEl('defs'); svg.appendChild(defs);
 
   // ── Coordinate helpers ────────────────────────────────────────────
-  const xOf = i => PD_L + i*(W - PD_L - PD_R) / (days.length-1);
-  const yOf = s => PT   + (chartH - PT - PB) * (1 - s/allMx);
+  // xOf: symmetric — dot i=0 at PAD, i=3 at W/2, i=6 at W-PAD
+  const xOf = i => PAD + i*(W - 2*PAD)/(days.length-1);
+  const yOf = s => PT  + (chartH - PT - PB)*(1 - s/allMx);
 
-  // ── Grid lines ────────────────────────────────────────────────────
-  [0, .25, .5, .75, 1].forEach(f=>{
-    const y = yOf(allMx * f);
-    svg.appendChild(svgEl('line',{x1:PD_L,x2:W-PD_R,y1:y,y2:y,
-      stroke:'rgba(255,255,255,.055)','stroke-width':'1','stroke-dasharray': f===0?'':''}));
+  // ── Grid lines + y-axis labels ────────────────────────────────────
+  [0,.25,.5,.75,1].forEach(f=>{
+    const y=yOf(allMx*f);
+    // Grid line: spans full plot width (symmetric PAD → W-PAD)
+    svg.appendChild(svgEl('line',{x1:PAD,x2:W-PAD,y1:y,y2:y,
+      stroke:'rgba(255,255,255,.05)','stroke-width':'1',
+      'stroke-dasharray':f===0?'':'3,5'}));
     if(f>0){
-      const tx=svgEl('text',{x:PD_L-5,y:y+AX_FS*0.35,
-        'text-anchor':'end',fill:'rgba(232,237,245,.35)',
+      // Y-axis label floats in left margin (text-anchor:end, x = PAD-6)
+      const tx=svgEl('text',{x:PAD-6,y:y+AX_FS*0.38,
+        'text-anchor':'end',fill:'rgba(232,237,245,.32)',
         'font-size':AX_FS,'font-family':'Inter,sans-serif'});
       tx.textContent=Math.round(allMx*f);
       svg.appendChild(tx);
     }
   });
 
-  // ── Series lines + dots ───────────────────────────────────────────
+  // ── Series ────────────────────────────────────────────────────────
   targets.forEach(uid=>{
     const scores=scMap[uid];
-    const rawColor=DB.users[uid].color;
-    const {a:cA, b:cB}=parseColor(rawColor);  // primary and secondary theme colors
-    const pts=days.map((_,i)=>[xOf(i), yOf(scores[i])]);
-    const gid='g_'+uid.replace(/[^a-z0-9]/gi,'x');
-    const lid='l_'+uid.replace(/[^a-z0-9]/gi,'x'); // horizontal gradient for the line
+    const {a:cA,b:cB}=parseColor(DB.users[uid].color);
+    const pts=days.map((_,i)=>[xOf(i),yOf(scores[i])]);
+    // Prefix with svgId so gradients stay scoped to THIS svg element.
+    // SVG url(#id) is document-wide: two SVGs using the same user ID would
+    // cross-reference each other's gradients → strokes vanish after a redraw.
+    const _pfx=svgId.replace(/[^a-z0-9]/gi,'_');
+    const gid ='g_'+_pfx+'_'+uid.replace(/[^a-z0-9]/gi,'x');
+    const lid ='l_'+_pfx+'_'+uid.replace(/[^a-z0-9]/gi,'x');
+    const shid='s_'+_pfx+'_'+uid.replace(/[^a-z0-9]/gi,'x');  // shimmer gradient id
 
-    // Vertical gradient for area fill (colorA → transparent)
-    const grad=svgEl('linearGradient',{id:gid,x1:'0',y1:'0',x2:'0',y2:'1'});
-    grad.appendChild(svgEl('stop',{offset:'0%','stop-color':cA,'stop-opacity':'0.28'}));
-    grad.appendChild(svgEl('stop',{offset:'100%','stop-color':cB,'stop-opacity':'0'}));
+    // X bounds for the plot (dot 0 → dot 6)
+    const x0=xOf(0), x6=xOf(6);
+    // Y baseline = yOf(0) — the zero-score line
+    const yBase=yOf(0);
+
+    // ── Area fill: vertical gradient, userSpaceOnUse ─────────────────
+    // Anchored to actual plot coordinates — never degenerates.
+    const grad=svgEl('linearGradient',{id:gid,
+      x1:x0,y1:yOf(allMx), x2:x0,y2:yBase,
+      gradientUnits:'userSpaceOnUse'});
+    grad.appendChild(svgEl('stop',{offset:'0%', 'stop-color':cA,'stop-opacity':'0.30'}));
+    grad.appendChild(svgEl('stop',{offset:'100%','stop-color':cB,'stop-opacity':'0.01'}));
     defs.appendChild(grad);
 
-    // Horizontal gradient for the line stroke (colorA → colorB left to right)
-    const lgrad=svgEl('linearGradient',{id:lid,x1:'0',y1:'0',x2:'1',y2:'0',
-      gradientUnits:'objectBoundingBox'});
-    lgrad.appendChild(svgEl('stop',{offset:'0%','stop-color':cA,'stop-opacity':'1'}));
+    // ── Line gradient: horizontal, userSpaceOnUse ─────────────────────
+    // objectBoundingBox on a <path> is unreliable in WebKit/Safari
+    // (degenerate bbox when curve is near-horizontal → stroke vanishes).
+    // userSpaceOnUse with explicit x1/x2 is 100% reliable.
+    const lgrad=svgEl('linearGradient',{id:lid,
+      x1:x0,y1:'0', x2:x6,y2:'0',
+      gradientUnits:'userSpaceOnUse'});
+    lgrad.appendChild(svgEl('stop',{offset:'0%',  'stop-color':cA,'stop-opacity':'1'}));
     lgrad.appendChild(svgEl('stop',{offset:'100%','stop-color':cB,'stop-opacity':'1'}));
     defs.appendChild(lgrad);
 
-    const cv=curve(pts);
-    // Area fill — clipped at chartH
-    svg.appendChild(svgEl('path',{
-      d:cv+' L '+pts[pts.length-1][0]+','+(chartH+2)+' L '+pts[0][0]+','+(chartH+2)+' Z',
-      fill:'url(#'+gid+')'}));
-    // Line — uses horizontal gradient
-    svg.appendChild(svgEl('path',{d:cv,fill:'none',stroke:'url(#'+lid+')',
-      'stroke-width':LINE_W,'stroke-linecap':'round','stroke-linejoin':'round'}));
+    // ── Shimmer/parallax: a bright highlight swept right-to-left ──────
+    // Creates the "left-to-right flowing parallax" visual.
+    const shgrad=svgEl('linearGradient',{id:shid,
+      x1:x0,y1:'0', x2:x6,y2:'0',
+      gradientUnits:'userSpaceOnUse'});
+    const shMid=svgEl('stop',{offset:'15%','stop-color':'#ffffff','stop-opacity':'0.42'});
+    shgrad.appendChild(svgEl('stop',{offset:'0%',  'stop-color':'#ffffff','stop-opacity':'0'}));
+    shgrad.appendChild(shMid);
+    shgrad.appendChild(svgEl('stop',{offset:'45%','stop-color':'#ffffff','stop-opacity':'0'}));
+    shgrad.appendChild(svgEl('stop',{offset:'100%','stop-color':'#ffffff','stop-opacity':'0'}));
+    // Animate the sheen across the line, looping every 3.6 s
+    const shAnim=svgEl('animate',{
+      attributeName:'x1', values:`${x0};${x6};${x0}`,
+      dur:'3.6s', repeatCount:'indefinite',
+      calcMode:'spline', keyTimes:'0;0.5;1',
+      keySplines:'0.4 0 0.6 1;0.4 0 0.6 1'
+    });
+    const shAnim2=svgEl('animate',{
+      attributeName:'x2', values:`${x0*1.6};${x6*1.15};${x0*1.6}`,
+      dur:'3.6s', repeatCount:'indefinite',
+      calcMode:'spline', keyTimes:'0;0.5;1',
+      keySplines:'0.4 0 0.6 1;0.4 0 0.6 1'
+    });
+    shgrad.appendChild(shAnim);
+    shgrad.appendChild(shAnim2);
+    defs.appendChild(shgrad);
 
-    // Dots — draw hit-area circle first, then visual circle on top
+    // ── Draw area fill ────────────────────────────────────────────────
+    const cv=curve(pts);
+    // Close path at yBase (zero-score line) for a clean filled area
+    const areaD=cv+
+      ' L '+pts[pts.length-1][0]+','+yBase+
+      ' L '+pts[0][0]+','+yBase+' Z';
+    svg.appendChild(svgEl('path',{d:areaD, fill:'url(#'+gid+')'}));
+
+    // ── Draw line (base) ──────────────────────────────────────────────
+    svg.appendChild(svgEl('path',{d:cv,fill:'none',
+      stroke:'url(#'+lid+')',
+      'stroke-width':LINE_W,
+      'stroke-linecap':'round','stroke-linejoin':'round'}));
+
+    // ── Draw shimmer overlay on the line ──────────────────────────────
+    svg.appendChild(svgEl('path',{d:cv,fill:'none',
+      stroke:'url(#'+shid+')',
+      'stroke-width':LINE_W,
+      'stroke-linecap':'round','stroke-linejoin':'round',
+      opacity:'0.55'}));
+
+    // Dots
     pts.forEach(([x,y],di)=>{
       const isLast=di===6;
-      const r  = isLast ? DOT_R_L : DOT_R;
-      // Interpolate dot color along the gradient (left=cA, right=cB)
-      const t  = di/(days.length-1);
-      // For simplicity use cA for first half, cB for second half; today always cB
-      const dotColor = isLast ? cB : (t<0.5 ? cA : cB);
-      // Invisible hit area (larger, for touch)
-      const hit=svgEl('circle',{cx:x,cy:y,r:r+8,fill:'transparent'});
-      hit.style.cursor='pointer';
-      // Visual dot
-      const dot=svgEl('circle',{cx:x,cy:y,r:r,
-        fill:isLast?dotColor:'rgba(5,13,26,.92)',
-        stroke:dotColor,'stroke-width': isLast?'0':'2.2'});
+      const r   = isLast ? DOT_R_L : DOT_R;
+      const t   = di/(days.length-1);
+      const dotColor = isLast ? cB : (t<0.5?cA:cB);
+
+      // Today: outer glow rings
       if(isLast){
-        // Glowing ring for today's dot
-        const ring=svgEl('circle',{cx:x,cy:y,r:r+4,
-          fill:'none',stroke:dotColor,'stroke-width':'1.5',opacity:'0.45'});
-        svg.appendChild(ring);
+        svg.appendChild(svgEl('circle',{cx:x,cy:y,r:r+5,
+          fill:'none',stroke:dotColor,'stroke-width':'1.5',opacity:'0.4'}));
+        svg.appendChild(svgEl('circle',{cx:x,cy:y,r:r+10,
+          fill:'none',stroke:dotColor,'stroke-width':'0.8',opacity:'0.15'}));
       }
-      // Touch / hover tooltip
-      const showTip=ev=>{
-        const tip=el(tipId); if(!tip) return;
-        tip.textContent=DB.users[uid].name+': '+scores[di]+' pts';
-        tip.style.opacity='1';
-        const rect=svg.getBoundingClientRect();
-        const cx=(ev.clientX||ev.touches?.[0]?.clientX||0)-rect.left;
-        const cy=(ev.clientY||ev.touches?.[0]?.clientY||0)-rect.top;
-        tip.style.left=(cx+12)+'px';
-        tip.style.top =(cy-48)+'px';
-        tip.style.color=dotColor;
+
+      // Visual dot
+      svg.appendChild(svgEl('circle',{cx:x,cy:y,r:r,
+        fill:isLast?dotColor:'rgba(5,13,26,.92)',
+        stroke:dotColor,'stroke-width':isLast?'0':'2.5'}));
+
+      // Hit area (larger for touch, on top)
+      const hit=svgEl('circle',{cx:x,cy:y,r:r+12,fill:'transparent'});
+      hit.style.cursor='pointer';
+
+      // ── Tooltip: dot-anchored with dynamic caret ────────────────────
+      // Key principle: the CARET always points at dotPxX (never drifts).
+      // The tooltip BOX is clamped to stay inside the container.
+      // When the box is clamped, the caret is offset from the box center
+      // to still point at the dot — achieved via inline style on .ctip-caret.
+      const positionTip=()=>{
+        if(!tip) return;
+        const svgRect  = svg.getBoundingClientRect();
+        const wrapRect = (wrap||svg.parentElement).getBoundingClientRect();
+
+        // SVG-unit → px scale factors
+        const scX = svgRect.width  / W;
+        const scY = svgRect.height / H;
+
+        // Dot centre in px, relative to wrap container origin
+        const dotPxX = (svgRect.left - wrapRect.left) + x * scX;
+        const dotPxY = (svgRect.top  - wrapRect.top)  + y * scY;
+        const dotPxR = r * scY;               // dot radius in px
+
+        const tipW  = tip.offsetWidth  || 140;
+        const tipH  = tip.offsetHeight || 30;   // compact tip
+        const GAP   = 8;                        // px clearance: tip bottom ↔ dot top
+        const EDGE  = 10;                       // min gap from container edges
+
+        // ── Horizontal placement ──────────────────────────────────────
+        // Ideal: tip centred over dot
+        let left = dotPxX - tipW / 2;
+        const maxLeft = wrapRect.width - tipW - EDGE;
+        left = Math.max(EDGE, Math.min(left, maxLeft));
+
+        // ── Caret offset: always points to dotPxX ────────────────────
+        // caretX = dotPxX relative to the tip's left edge
+        const caretX = dotPxX - left;
+        const caretClamped = Math.max(14, Math.min(caretX, tipW - 14));
+
+        const caretEl = tip.querySelector('.ctip-caret');
+        const caretBorder = tip.querySelector('.ctip-caret-border');
+        if(caretEl)    caretEl.style.left    = caretClamped+'px';
+        if(caretBorder) caretBorder.style.left = caretClamped+'px';
+
+        // ── Vertical placement: ALWAYS above — never flip below ─────────
+        // PT is sized so the max-score dot has 44+ real px above it.
+        // For any lower dot there's even more room. Just clamp to ≥ 2px
+        // so the tip never leaves the container top.
+        let top = dotPxY - tipH - GAP - dotPxR;
+        top = Math.max(2, top);   // clamp only — tooltip stays ABOVE the dot
+
+        tip.style.left = left+'px';
+        tip.style.top  = top+'px';
       };
-      const hideTip=()=>{ const tip=el(tipId); if(tip) tip.style.opacity='0'; };
-      hit.addEventListener('mouseenter',showTip);
-      hit.addEventListener('touchstart',showTip,{passive:true});
-      hit.addEventListener('mouseleave',hideTip);
-      hit.addEventListener('touchend',hideTip,{passive:true});
+
+      const showTip=ev=>{
+        if(!tip) return;
+        // Toggle off same dot
+        if(tip._di===di && tip.classList.contains('on')){
+          tip.classList.remove('on'); tip._di=-1; return;
+        }
+        tip._di=di;
+        // Dynamic glow matching dot theme colour
+        tip.style.boxShadow=
+          `0 0 18px ${dotColor}44,0 8px 28px rgba(0,0,0,.6),`+
+          `0 2px 8px rgba(0,0,0,.4),0 0 0 .5px rgba(255,255,255,.07) inset`;
+        tip.style.borderColor=`${dotColor}44`;
+        tip.innerHTML=
+          `<span style="color:${dotColor};letter-spacing:.01em">${esc(DB.users[uid].name)}</span>`+
+          `<span style="color:rgba(232,237,245,.35);font-weight:400;margin:0 5px;font-size:.72rem">·</span>`+
+          `<span style="color:#fff;font-variant-numeric:tabular-nums">${scores[di]}`+
+          `<span style="font-size:.62rem;color:rgba(232,237,245,.42);font-weight:500;margin-left:3px;letter-spacing:.03em">pts</span></span>`+
+          // Caret border (behind) — same colour as tip border
+          `<span class="ctip-caret-border"></span>`+
+          // Caret fill (front) — same as bg
+          `<span class="ctip-caret"></span>`;
+        tip.classList.add('on');
+        requestAnimationFrame(positionTip);
+      };
+      const hideTip=()=>{
+        if(tip){tip.classList.remove('on');tip._di=-1;}
+      };
+
+      hit.addEventListener('click',ev=>{ev.stopPropagation();showTip(ev);});
+      hit.addEventListener('touchstart',ev=>{ev.stopPropagation();showTip(ev);},{passive:true});
+      hit.addEventListener('mouseenter',ev=>{if(tip&&tip._di!==di)showTip(ev);});
+      hit.addEventListener('mouseleave',ev=>{if(tip&&tip._di!==di)hideTip();});
       svg.appendChild(hit);
-      svg.appendChild(dot);
     });
 
     if(leg){
@@ -1772,21 +2163,23 @@ function drawChart(svgId, legId, dtId, tipId, focusUid){
     }
   });
 
-  // ── Day labels — inside SVG, x-aligned with dots ─────────────────
+  // ── Day labels ────────────────────────────────────────────────────
   labels.forEach((l,i)=>{
     const isToday=i===6;
     const tx=svgEl('text',{
-      x: xOf(i),
-      y: H - (isMobile ? 6 : 5),
-      'text-anchor': 'middle',
-      fill: isToday ? 'rgba(79,142,247,1)' : 'rgba(232,237,245,.42)',
-      'font-size': DAY_FS,
-      'font-weight': isToday ? '800' : '500',
-      'font-family': 'Inter,sans-serif'
+      x:xOf(i), y:H-(isMobile?6:5),
+      'text-anchor':'middle',
+      fill:isToday?'rgba(79,142,247,1)':'rgba(232,237,245,.4)',
+      'font-size':DAY_FS,
+      'font-weight':isToday?'800':'500',
+      'font-family':'Inter,sans-serif'
     });
-    tx.textContent = l + (isToday ? ' ★' : '');
+    tx.textContent=l+(isToday?' ★':'');
     svg.appendChild(tx);
   });
+
+  // Click SVG background → dismiss tooltip
+  svg.addEventListener('click',()=>{ if(tip){tip.classList.remove('on');tip._di=-1;} });
 
   // Legacy external label row
   if(dtl){
@@ -1849,7 +2242,10 @@ function buildHstCard(uid, date, day, score, isToday, color){
       <div class="bb text-2xl leading-none" style="color:${score>0?color:'rgba(232,237,245,.22)'}">${score}</div>
       <div class="text-[10px] text-white/25 mt-0.5">pts</div>
     </div>
-    <div class="text-white/22 ml-2 text-xs flex-shrink-0 select-none">▼</div>`;
+    <div class="flex flex-col gap-1 items-end ml-2 flex-shrink-0">
+      <div class="text-white/22 text-xs select-none">▼</div>
+      <button class="hst-edit-btn" onclick="event.stopPropagation();openEditModal('${uid}','${date}')">✏ Edit</button>
+    </div>`;
   const body=document.createElement('div'); body.className='hst-bd';
   const ws=day.wakeupLocked ? calcWakeScore(uid,date) : {pts:0,label:'Not locked',cls:'wvs-no',icon:'⏰'};
   const ts=(day.todos||[]).filter(t=>t.done).reduce((s,t)=>s+PTS[t.priority],0);
